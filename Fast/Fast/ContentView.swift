@@ -9,13 +9,18 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        TabView {
+            TimerView()
+                .tabItem {
+                    Label("Timer", systemImage: "timer")
+                }
+
+            // stub for future History screen
+            Text("History")
+                .tabItem {
+                    Label("History", systemImage: "calendar")
+                }
         }
-        .padding()
     }
 }
 

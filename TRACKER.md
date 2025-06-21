@@ -9,8 +9,6 @@
 
 ## ⬜ To Do
 
-- [ ] ensure timer engine accurate count-up across bg/fg
-- [ ] build large count-up timer screen in TimerView UI
 - [ ] central AppState with Combine publishes for active fast state
 - [ ] save session when user taps End (persist on end)
 - [ ] month grid view of fasts in history calendar UI
@@ -21,6 +19,7 @@
 ## 🔄 In Progress
 
 
+
 ## ✅ Done
 
 *(move completed, checked items here)*
@@ -28,3 +27,5 @@
 - [x] Project scaffold – create Xcode project skeleton
 - [x] define FastSession entity and add unit tests
 - [x] implement FastRepository CRUD in repository layer
+- [x] ensure timer engine accurate count-up across bg/fg
+- [x] build large count-up timer screen in TimerView UI
