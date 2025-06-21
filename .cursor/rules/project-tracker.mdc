@@ -1,0 +1,9 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+- Always read the [README.md](mdc:README.md) before starting
+- When beginning a new task, always consult with [TRACKER.md](mdc:TRACKER.md) as that is the source of truth for all tickets
+- Only move a task to done when the user explicitly says. Feel free to ask if you can move it if you think the task is done.
+- If the user does not specify the task at the beginning of the prompt, clarify which task the prompt belongs to
