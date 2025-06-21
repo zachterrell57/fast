@@ -7,40 +7,40 @@
 	objects = {
 
 /* Begin PBXContainerItemProxy section */
-		2E7CE2B92E07363C00CD2BDB /* PBXContainerItemProxy */ = {
+		2E8A4E232E0757CC0067092A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 2E7CE2A02E07363B00CD2BDB /* Project object */;
+			containerPortal = 2E8A4E0A2E0757CB0067092A /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 2E7CE2A72E07363B00CD2BDB;
+			remoteGlobalIDString = 2E8A4E112E0757CB0067092A;
 			remoteInfo = Fast;
 		};
-		2E7CE2C32E07363C00CD2BDB /* PBXContainerItemProxy */ = {
+		2E8A4E2D2E0757CC0067092A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 2E7CE2A02E07363B00CD2BDB /* Project object */;
+			containerPortal = 2E8A4E0A2E0757CB0067092A /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 2E7CE2A72E07363B00CD2BDB;
+			remoteGlobalIDString = 2E8A4E112E0757CB0067092A;
 			remoteInfo = Fast;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		2E7CE2A82E07363B00CD2BDB /* Fast.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Fast.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		2E7CE2B82E07363C00CD2BDB /* FastTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FastTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		2E7CE2C22E07363C00CD2BDB /* FastUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FastUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		2E8A4E122E0757CB0067092A /* Fast.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Fast.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		2E8A4E222E0757CC0067092A /* FastTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FastTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		2E8A4E2C2E0757CC0067092A /* FastUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FastUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		2E7CE2AA2E07363B00CD2BDB /* Fast */ = {
+		2E8A4E142E0757CB0067092A /* Fast */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = Fast;
 			sourceTree = "<group>";
 		};
-		2E7CE2BB2E07363C00CD2BDB /* FastTests */ = {
+		2E8A4E252E0757CC0067092A /* FastTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = FastTests;
 			sourceTree = "<group>";
 		};
-		2E7CE2C52E07363C00CD2BDB /* FastUITests */ = {
+		2E8A4E2F2E0757CC0067092A /* FastUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = FastUITests;
 			sourceTree = "<group>";
@@ -48,21 +48,21 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		2E7CE2A52E07363B00CD2BDB /* Frameworks */ = {
+		2E8A4E0F2E0757CB0067092A /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		2E7CE2B52E07363C00CD2BDB /* Frameworks */ = {
+		2E8A4E1F2E0757CC0067092A /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		2E7CE2BF2E07363C00CD2BDB /* Frameworks */ = {
+		2E8A4E292E0757CC0067092A /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -72,22 +72,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		2E7CE29F2E07363B00CD2BDB = {
+		2E8A4E092E0757CB0067092A = {
 			isa = PBXGroup;
 			children = (
-				2E7CE2AA2E07363B00CD2BDB /* Fast */,
-				2E7CE2BB2E07363C00CD2BDB /* FastTests */,
-				2E7CE2C52E07363C00CD2BDB /* FastUITests */,
-				2E7CE2A92E07363B00CD2BDB /* Products */,
+				2E8A4E142E0757CB0067092A /* Fast */,
+				2E8A4E252E0757CC0067092A /* FastTests */,
+				2E8A4E2F2E0757CC0067092A /* FastUITests */,
+				2E8A4E132E0757CB0067092A /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		2E7CE2A92E07363B00CD2BDB /* Products */ = {
+		2E8A4E132E0757CB0067092A /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				2E7CE2A82E07363B00CD2BDB /* Fast.app */,
-				2E7CE2B82E07363C00CD2BDB /* FastTests.xctest */,
-				2E7CE2C22E07363C00CD2BDB /* FastUITests.xctest */,
+				2E8A4E122E0757CB0067092A /* Fast.app */,
+				2E8A4E222E0757CC0067092A /* FastTests.xctest */,
+				2E8A4E2C2E0757CC0067092A /* FastUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -95,134 +95,134 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		2E7CE2A72E07363B00CD2BDB /* Fast */ = {
+		2E8A4E112E0757CB0067092A /* Fast */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 2E7CE2CC2E07363C00CD2BDB /* Build configuration list for PBXNativeTarget "Fast" */;
+			buildConfigurationList = 2E8A4E362E0757CC0067092A /* Build configuration list for PBXNativeTarget "Fast" */;
 			buildPhases = (
-				2E7CE2A42E07363B00CD2BDB /* Sources */,
-				2E7CE2A52E07363B00CD2BDB /* Frameworks */,
-				2E7CE2A62E07363B00CD2BDB /* Resources */,
+				2E8A4E0E2E0757CB0067092A /* Sources */,
+				2E8A4E0F2E0757CB0067092A /* Frameworks */,
+				2E8A4E102E0757CB0067092A /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				2E7CE2AA2E07363B00CD2BDB /* Fast */,
+				2E8A4E142E0757CB0067092A /* Fast */,
 			);
 			name = Fast;
 			packageProductDependencies = (
 			);
 			productName = Fast;
-			productReference = 2E7CE2A82E07363B00CD2BDB /* Fast.app */;
+			productReference = 2E8A4E122E0757CB0067092A /* Fast.app */;
 			productType = "com.apple.product-type.application";
 		};
-		2E7CE2B72E07363C00CD2BDB /* FastTests */ = {
+		2E8A4E212E0757CC0067092A /* FastTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 2E7CE2CF2E07363C00CD2BDB /* Build configuration list for PBXNativeTarget "FastTests" */;
+			buildConfigurationList = 2E8A4E392E0757CC0067092A /* Build configuration list for PBXNativeTarget "FastTests" */;
 			buildPhases = (
-				2E7CE2B42E07363C00CD2BDB /* Sources */,
-				2E7CE2B52E07363C00CD2BDB /* Frameworks */,
-				2E7CE2B62E07363C00CD2BDB /* Resources */,
+				2E8A4E1E2E0757CC0067092A /* Sources */,
+				2E8A4E1F2E0757CC0067092A /* Frameworks */,
+				2E8A4E202E0757CC0067092A /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				2E7CE2BA2E07363C00CD2BDB /* PBXTargetDependency */,
+				2E8A4E242E0757CC0067092A /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				2E7CE2BB2E07363C00CD2BDB /* FastTests */,
+				2E8A4E252E0757CC0067092A /* FastTests */,
 			);
 			name = FastTests;
 			packageProductDependencies = (
 			);
 			productName = FastTests;
-			productReference = 2E7CE2B82E07363C00CD2BDB /* FastTests.xctest */;
+			productReference = 2E8A4E222E0757CC0067092A /* FastTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		2E7CE2C12E07363C00CD2BDB /* FastUITests */ = {
+		2E8A4E2B2E0757CC0067092A /* FastUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 2E7CE2D22E07363C00CD2BDB /* Build configuration list for PBXNativeTarget "FastUITests" */;
+			buildConfigurationList = 2E8A4E3C2E0757CC0067092A /* Build configuration list for PBXNativeTarget "FastUITests" */;
 			buildPhases = (
-				2E7CE2BE2E07363C00CD2BDB /* Sources */,
-				2E7CE2BF2E07363C00CD2BDB /* Frameworks */,
-				2E7CE2C02E07363C00CD2BDB /* Resources */,
+				2E8A4E282E0757CC0067092A /* Sources */,
+				2E8A4E292E0757CC0067092A /* Frameworks */,
+				2E8A4E2A2E0757CC0067092A /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				2E7CE2C42E07363C00CD2BDB /* PBXTargetDependency */,
+				2E8A4E2E2E0757CC0067092A /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				2E7CE2C52E07363C00CD2BDB /* FastUITests */,
+				2E8A4E2F2E0757CC0067092A /* FastUITests */,
 			);
 			name = FastUITests;
 			packageProductDependencies = (
 			);
 			productName = FastUITests;
-			productReference = 2E7CE2C22E07363C00CD2BDB /* FastUITests.xctest */;
+			productReference = 2E8A4E2C2E0757CC0067092A /* FastUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		2E7CE2A02E07363B00CD2BDB /* Project object */ = {
+		2E8A4E0A2E0757CB0067092A /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1620;
 				LastUpgradeCheck = 1620;
 				TargetAttributes = {
-					2E7CE2A72E07363B00CD2BDB = {
+					2E8A4E112E0757CB0067092A = {
 						CreatedOnToolsVersion = 16.2;
 					};
-					2E7CE2B72E07363C00CD2BDB = {
+					2E8A4E212E0757CC0067092A = {
 						CreatedOnToolsVersion = 16.2;
-						TestTargetID = 2E7CE2A72E07363B00CD2BDB;
+						TestTargetID = 2E8A4E112E0757CB0067092A;
 					};
-					2E7CE2C12E07363C00CD2BDB = {
+					2E8A4E2B2E0757CC0067092A = {
 						CreatedOnToolsVersion = 16.2;
-						TestTargetID = 2E7CE2A72E07363B00CD2BDB;
+						TestTargetID = 2E8A4E112E0757CB0067092A;
 					};
 				};
 			};
-			buildConfigurationList = 2E7CE2A32E07363B00CD2BDB /* Build configuration list for PBXProject "Fast" */;
+			buildConfigurationList = 2E8A4E0D2E0757CB0067092A /* Build configuration list for PBXProject "Fast" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
 			);
-			mainGroup = 2E7CE29F2E07363B00CD2BDB;
+			mainGroup = 2E8A4E092E0757CB0067092A;
 			minimizedProjectReferenceProxies = 1;
 			preferredProjectObjectVersion = 77;
-			productRefGroup = 2E7CE2A92E07363B00CD2BDB /* Products */;
+			productRefGroup = 2E8A4E132E0757CB0067092A /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				2E7CE2A72E07363B00CD2BDB /* Fast */,
-				2E7CE2B72E07363C00CD2BDB /* FastTests */,
-				2E7CE2C12E07363C00CD2BDB /* FastUITests */,
+				2E8A4E112E0757CB0067092A /* Fast */,
+				2E8A4E212E0757CC0067092A /* FastTests */,
+				2E8A4E2B2E0757CC0067092A /* FastUITests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		2E7CE2A62E07363B00CD2BDB /* Resources */ = {
+		2E8A4E102E0757CB0067092A /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		2E7CE2B62E07363C00CD2BDB /* Resources */ = {
+		2E8A4E202E0757CC0067092A /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		2E7CE2C02E07363C00CD2BDB /* Resources */ = {
+		2E8A4E2A2E0757CC0067092A /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -232,21 +232,21 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		2E7CE2A42E07363B00CD2BDB /* Sources */ = {
+		2E8A4E0E2E0757CB0067092A /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		2E7CE2B42E07363C00CD2BDB /* Sources */ = {
+		2E8A4E1E2E0757CC0067092A /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		2E7CE2BE2E07363C00CD2BDB /* Sources */ = {
+		2E8A4E282E0757CC0067092A /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -256,20 +256,20 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		2E7CE2BA2E07363C00CD2BDB /* PBXTargetDependency */ = {
+		2E8A4E242E0757CC0067092A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 2E7CE2A72E07363B00CD2BDB /* Fast */;
-			targetProxy = 2E7CE2B92E07363C00CD2BDB /* PBXContainerItemProxy */;
+			target = 2E8A4E112E0757CB0067092A /* Fast */;
+			targetProxy = 2E8A4E232E0757CC0067092A /* PBXContainerItemProxy */;
 		};
-		2E7CE2C42E07363C00CD2BDB /* PBXTargetDependency */ = {
+		2E8A4E2E2E0757CC0067092A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 2E7CE2A72E07363B00CD2BDB /* Fast */;
-			targetProxy = 2E7CE2C32E07363C00CD2BDB /* PBXContainerItemProxy */;
+			target = 2E8A4E112E0757CB0067092A /* Fast */;
+			targetProxy = 2E8A4E2D2E0757CC0067092A /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		2E7CE2CA2E07363C00CD2BDB /* Debug */ = {
+		2E8A4E342E0757CC0067092A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -332,7 +332,7 @@
 			};
 			name = Debug;
 		};
-		2E7CE2CB2E07363C00CD2BDB /* Release */ = {
+		2E8A4E352E0757CC0067092A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -388,7 +388,7 @@
 			};
 			name = Release;
 		};
-		2E7CE2CD2E07363C00CD2BDB /* Debug */ = {
+		2E8A4E372E0757CC0067092A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -396,6 +396,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Fast/Preview Content\"";
+				DEVELOPMENT_TEAM = 25P22K2K3W;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -416,7 +417,7 @@
 			};
 			name = Debug;
 		};
-		2E7CE2CE2E07363C00CD2BDB /* Release */ = {
+		2E8A4E382E0757CC0067092A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -424,6 +425,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Fast/Preview Content\"";
+				DEVELOPMENT_TEAM = 25P22K2K3W;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -444,12 +446,13 @@
 			};
 			name = Release;
 		};
-		2E7CE2D02E07363C00CD2BDB /* Debug */ = {
+		2E8A4E3A2E0757CC0067092A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 25P22K2K3W;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
 				MARKETING_VERSION = 1.0;
@@ -462,12 +465,13 @@
 			};
 			name = Debug;
 		};
-		2E7CE2D12E07363C00CD2BDB /* Release */ = {
+		2E8A4E3B2E0757CC0067092A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 25P22K2K3W;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
 				MARKETING_VERSION = 1.0;
@@ -480,11 +484,12 @@
 			};
 			name = Release;
 		};
-		2E7CE2D32E07363C00CD2BDB /* Debug */ = {
+		2E8A4E3D2E0757CC0067092A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 25P22K2K3W;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = zachterrell.FastUITests;
@@ -496,11 +501,12 @@
 			};
 			name = Debug;
 		};
-		2E7CE2D42E07363C00CD2BDB /* Release */ = {
+		2E8A4E3E2E0757CC0067092A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 25P22K2K3W;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = zachterrell.FastUITests;
@@ -515,43 +521,43 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		2E7CE2A32E07363B00CD2BDB /* Build configuration list for PBXProject "Fast" */ = {
+		2E8A4E0D2E0757CB0067092A /* Build configuration list for PBXProject "Fast" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				2E7CE2CA2E07363C00CD2BDB /* Debug */,
-				2E7CE2CB2E07363C00CD2BDB /* Release */,
+				2E8A4E342E0757CC0067092A /* Debug */,
+				2E8A4E352E0757CC0067092A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		2E7CE2CC2E07363C00CD2BDB /* Build configuration list for PBXNativeTarget "Fast" */ = {
+		2E8A4E362E0757CC0067092A /* Build configuration list for PBXNativeTarget "Fast" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				2E7CE2CD2E07363C00CD2BDB /* Debug */,
-				2E7CE2CE2E07363C00CD2BDB /* Release */,
+				2E8A4E372E0757CC0067092A /* Debug */,
+				2E8A4E382E0757CC0067092A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		2E7CE2CF2E07363C00CD2BDB /* Build configuration list for PBXNativeTarget "FastTests" */ = {
+		2E8A4E392E0757CC0067092A /* Build configuration list for PBXNativeTarget "FastTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				2E7CE2D02E07363C00CD2BDB /* Debug */,
-				2E7CE2D12E07363C00CD2BDB /* Release */,
+				2E8A4E3A2E0757CC0067092A /* Debug */,
+				2E8A4E3B2E0757CC0067092A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		2E7CE2D22E07363C00CD2BDB /* Build configuration list for PBXNativeTarget "FastUITests" */ = {
+		2E8A4E3C2E0757CC0067092A /* Build configuration list for PBXNativeTarget "FastUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				2E7CE2D32E07363C00CD2BDB /* Debug */,
-				2E7CE2D42E07363C00CD2BDB /* Release */,
+				2E8A4E3D2E0757CC0067092A /* Debug */,
+				2E8A4E3E2E0757CC0067092A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = 2E7CE2A02E07363B00CD2BDB /* Project object */;
+	rootObject = 2E8A4E0A2E0757CB0067092A /* Project object */;
 }

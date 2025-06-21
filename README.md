@@ -48,21 +48,6 @@ struct FastSession: Identifiable {
 
 Navigation via `TabView`; shared `@Observable` `AppState` holds active fast.
 
-### Ticket Breakdown
-
-| #  | Ticket                     | Acceptance Criteria                           |
-| -- | -------------------------- | --------------------------------------------- |
-| 1  | **Project scaffold**       | Xcode project compiles on iOS 17+             |
-| 2  | **FastSession data model** | Entity defined, unit‑tested CRUD              |
-| 3  | **Repository layer**       | `FastRepository` provides CRUD; 95%+ coverage |
-| 4  | **Timer engine**           | Wall‑clock diff stays accurate across BG/FG   |
-| 5  | **TimerView UI**           | ≥ 44 pt font, haptic on taps                  |
-| 6  | **Active fast state**      | `AppState` publishes elapsed secs             |
-| 7  | **Persist on end**         | Ending fast saves record & clears active      |
-| 8  | **History calendar UI**    | Month grid performant for 2 years             |
-| 9  | **Fast‑detail modal**      | Shows start/end/duration; edit/delete         |
-| 10 | **Design polish**          | Monochrome palette, app icon                  |
-| 11 | **QA checklist**           | Manual test plan covers core flows            |
 
 ### Risks & Mitigations
 
