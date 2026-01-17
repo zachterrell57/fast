@@ -9,16 +9,13 @@
 
 ## ⬜ To Do
 
-- [ ] central AppState with Combine publishes for active fast state
-- [ ] save session when user taps End (persist on end)
-- [ ] month grid view of fasts in history calendar UI
 - [ ] fast-detail modal: view, edit, delete sessions
 - [ ] design polish: monochrome palette & app icon
 - [ ] manual test plan for core flows (QA checklist)
 
 ## 🔄 In Progress
 
-
+- [ ] month grid view of fasts in history calendar UI
 
 ## ✅ Done
 
@@ -29,3 +26,5 @@
 - [x] implement FastRepository CRUD in repository layer
 - [x] ensure timer engine accurate count-up across bg/fg
 - [x] build large count-up timer screen in TimerView UI
+- [x] central AppState with Combine publishes for active fast state
+- [x] save session when user taps End (persist on end)
