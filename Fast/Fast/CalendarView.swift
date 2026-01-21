@@ -290,6 +290,6 @@ struct DayCell: View {
         }
         .buttonStyle(.plain)
         .frame(height: 32)
-        .disabled(!isFasted)  // Only fasted days are tappable
+        .disabled(date > Date())  // Only disable future dates
     }
 }
