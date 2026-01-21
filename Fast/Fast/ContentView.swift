@@ -181,6 +181,7 @@ struct ContentView: View {
                 selectedPreset = nil
                 // Reset so summary view appears for the newly completed fast
                 showingNewFastAfterSummary = false
+                selectedDate = nil  // Return to today to show completion summary
             }
         }
         .toolbar {
