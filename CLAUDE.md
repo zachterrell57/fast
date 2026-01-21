@@ -7,9 +7,7 @@ Fasting tracker iOS app.
 **CRITICAL**: Detect workflow mode from message prefix and **IMMEDIATELY invoke the appropriate Skill tool** as your FIRST action:
 
 ### Bug Fix Mode
-**Trigger**: Message starts with any of:
-- "Bug:"
-- "Bug fix:"
+**Trigger**: Message contains the word "bug" (case-insensitive) OR starts with:
 - "Fix:"
 - "Hotfix:"
 - "Quick fix:"
