@@ -38,15 +38,53 @@ struct ContentView: View {
     @State private var selectedSeconds: Int = 0
     @State private var selectedPreset: Int? = nil
     @State private var lastDialHour: Int = 0
+    @State private var selectedDate: Date? = nil  // nil = today, set to view past dates
+    @State private var showingNewFastAfterSummary: Bool = false  // Force show dial after "Start New Fast"
     private let maxDuration: TimeInterval = 24 * 3600 // 24 hours
     private let dialFeedback = UIImpactFeedbackGenerator(style: .light)
+    private let calendar = Calendar.current
 
     private var activeSession: FastSession? {
         activeSessions.first
     }
 
+    /// Session completed today (for showing summary after completion)
+    private var todayCompletedSession: FastSession? {
+        completedSessions.first { calendar.isDateInToday($0.startAt) }
+    }
+
+    /// Session for the selected date (when viewing past dates from calendar)
+    private var sessionForSelectedDate: FastSession? {
+        guard let date = selectedDate else { return nil }
+        return completedSessions.first { calendar.isDate($0.startAt, inSameDayAs: date) }
+    }
+
+    /// Whether we're viewing today or a past date
+    private var isViewingToday: Bool {
+        selectedDate == nil
+    }
+
+    /// Whether to show the summary view
+    private var shouldShowSummary: Bool {
+        // Never show summary if there's an active fast
+        if activeSession != nil { return false }
+        // Don't show if user just tapped "Start New Fast"
+        if showingNewFastAfterSummary { return false }
+        // Show if viewing a past date with a completed session
+        if selectedDate != nil && sessionForSelectedDate != nil { return true }
+        // Show if today has a completed session
+        return todayCompletedSession != nil
+    }
+
+    /// The session to display in summary view
+    private var summarySession: FastSession? {
+        if let date = selectedDate {
+            return sessionForSelectedDate
+        }
+        return todayCompletedSession
+    }
+
     private var fastedDates: Set<DateComponents> {
-        let calendar = Calendar.current
         var dates = Set<DateComponents>()
         for session in completedSessions {
             let components = calendar.dateComponents([.year, .month, .day], from: session.startAt)
@@ -59,110 +97,56 @@ struct ContentView: View {
         NavigationStack {
             GeometryReader { geometry in
             VStack(spacing: 0) {
-                // Calendar section (compact by default, expandable)
-                CalendarSection(fastedDates: fastedDates)
-
-                // Timer section (bottom half)
-                VStack(spacing: 24) {
-                    Spacer()
-
-                    // Countdown display with circular progress
-                    ZStack {
-                        // Background circle
-                        Circle()
-                            .stroke(Color(.systemGray5), lineWidth: 8)
-
-                        // Progress circle
-                        Circle()
-                            .trim(from: 0, to: progress)
-                            .stroke(Color.accentColor, style: StrokeStyle(lineWidth: 8, lineCap: .round))
-                            .rotationEffect(.degrees(-90))
-
-                        // Draggable handle (only when not active)
-                        if activeSession == nil {
-                            Circle()
-                                .fill(Color.red)
-                                .frame(width: 24, height: 24)
-                                .shadow(radius: 2)
-                                .offset(y: -110)
-                                .rotationEffect(.degrees(handleAngle))
-                        }
-
-                        // Timer text
-                        Text(formattedTime)
-                            .font(.system(size: 48, weight: .light, design: .rounded))
-                            .monospacedDigit()
-                    }
-                    .frame(width: 220, height: 220)
-                    .gesture(
-                        DragGesture()
-                            .onChanged { value in
-                                guard activeSession == nil else { return }
-                                let center = CGPoint(x: 110, y: 110)
-                                let location = value.location
-                                let dx = location.x - center.x
-                                let dy = center.y - location.y
-                                var angle = atan2(dx, dy) * 180 / .pi
-                                if angle < 0 { angle += 360 }
-                                let hours = Int(round(angle / 360 * 24)) % 24
-                                if hours != lastDialHour {
-                                    dialFeedback.impactOccurred()
-                                    lastDialHour = hours
-                                }
-                                selectedSeconds = hours * 3600
-                                selectedPreset = nil
-                            }
-                    )
-
-                    // Preset pills (hidden when active session)
-                    HStack(spacing: 12) {
-                        ForEach(fastingPresets, id: \.seconds) { preset in
-                            Button {
-                                if selectedPreset == preset.seconds {
-                                    selectedPreset = nil
-                                    selectedSeconds = 0
-                                } else {
-                                    selectedSeconds = preset.seconds
-                                    selectedPreset = preset.seconds
-                                }
-                            } label: {
-                                Text(preset.label)
-                                    .font(.subheadline.weight(.medium))
-                                    .padding(.horizontal, 16)
-                                    .padding(.vertical, 8)
-                                    .background(
-                                        Capsule()
-                                            .fill(selectedPreset == preset.seconds ? Color.accentColor : Color(.systemGray5))
-                                    )
-                                    .foregroundColor(selectedPreset == preset.seconds ? .white : .primary)
-                            }
-                            .buttonStyle(.plain)
-                        }
-                    }
-                    .opacity(activeSession == nil ? 1 : 0)
-
-                    Spacer()
-
+                // Back to Today button (when viewing past date)
+                if !isViewingToday {
                     Button {
-                        if activeSession != nil {
-                            stopFast()
-                        } else {
-                            startFast()
+                        withAnimation {
+                            selectedDate = nil
                         }
                     } label: {
-                        Label(
-                            activeSession != nil ? "Stop" : "Start",
-                            systemImage: activeSession != nil ? "stop.fill" : "play.fill"
-                        )
-                        .font(.headline)
-                        .frame(minWidth: 120)
+                        HStack(spacing: 4) {
+                            Image(systemName: "chevron.left")
+                            Text("Today")
+                        }
+                        .font(.subheadline)
                     }
-                    .buttonStyle(.borderedProminent)
-                    .controlSize(.large)
-                    .disabled(activeSession == nil && selectedSeconds == 0)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal)
+                    .padding(.top, 8)
                 }
-                .padding(.bottom, 20)
-                .animation(nil, value: activeSession?.id)
+
+                // Calendar section (compact by default, expandable)
+                CalendarSection(
+                    fastedDates: fastedDates,
+                    selectedDate: $selectedDate,
+                    onDateSelected: { date in
+                        withAnimation {
+                            // Only allow selecting dates with completed fasts
+                            let components = calendar.dateComponents([.year, .month, .day], from: date)
+                            if fastedDates.contains(components) {
+                                selectedDate = date
+                                showingNewFastAfterSummary = false
+                            }
+                        }
+                    }
+                )
+
+                // Main content area
+                if shouldShowSummary, let session = summarySession {
+                    // Summary view for completed fast
+                    FastSummaryView(
+                        session: session,
+                        isToday: isViewingToday
+                    ) {
+                        // "Start New Fast" callback
+                        withAnimation {
+                            showingNewFastAfterSummary = true
+                        }
+                    }
+                } else {
+                    // Timer/dial view
+                    timerView
+                }
             }
         }
         .onAppear {
@@ -231,6 +215,110 @@ struct ContentView: View {
         let minutes = (totalSeconds % 3600) / 60
         let seconds = totalSeconds % 60
         return String(format: "%02d:%02d:%02d", hours, minutes, seconds)
+    }
+
+    @ViewBuilder
+    private var timerView: some View {
+        VStack(spacing: 24) {
+            Spacer()
+
+            // Countdown display with circular progress
+            ZStack {
+                // Background circle
+                Circle()
+                    .stroke(Color(.systemGray5), lineWidth: 8)
+
+                // Progress circle
+                Circle()
+                    .trim(from: 0, to: progress)
+                    .stroke(Color.accentColor, style: StrokeStyle(lineWidth: 8, lineCap: .round))
+                    .rotationEffect(.degrees(-90))
+
+                // Draggable handle (only when not active)
+                if activeSession == nil {
+                    Circle()
+                        .fill(Color.red)
+                        .frame(width: 24, height: 24)
+                        .shadow(radius: 2)
+                        .offset(y: -110)
+                        .rotationEffect(.degrees(handleAngle))
+                }
+
+                // Timer text
+                Text(formattedTime)
+                    .font(.system(size: 48, weight: .light, design: .rounded))
+                    .monospacedDigit()
+            }
+            .frame(width: 220, height: 220)
+            .gesture(
+                DragGesture()
+                    .onChanged { value in
+                        guard activeSession == nil else { return }
+                        let center = CGPoint(x: 110, y: 110)
+                        let location = value.location
+                        let dx = location.x - center.x
+                        let dy = center.y - location.y
+                        var angle = atan2(dx, dy) * 180 / .pi
+                        if angle < 0 { angle += 360 }
+                        let hours = Int(round(angle / 360 * 24)) % 24
+                        if hours != lastDialHour {
+                            dialFeedback.impactOccurred()
+                            lastDialHour = hours
+                        }
+                        selectedSeconds = hours * 3600
+                        selectedPreset = nil
+                    }
+            )
+
+            // Preset pills (hidden when active session)
+            HStack(spacing: 12) {
+                ForEach(fastingPresets, id: \.seconds) { preset in
+                    Button {
+                        if selectedPreset == preset.seconds {
+                            selectedPreset = nil
+                            selectedSeconds = 0
+                        } else {
+                            selectedSeconds = preset.seconds
+                            selectedPreset = preset.seconds
+                        }
+                    } label: {
+                        Text(preset.label)
+                            .font(.subheadline.weight(.medium))
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 8)
+                            .background(
+                                Capsule()
+                                    .fill(selectedPreset == preset.seconds ? Color.accentColor : Color(.systemGray5))
+                            )
+                            .foregroundColor(selectedPreset == preset.seconds ? .white : .primary)
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .opacity(activeSession == nil ? 1 : 0)
+
+            Spacer()
+
+            Button {
+                if activeSession != nil {
+                    stopFast()
+                } else {
+                    startFast()
+                }
+            } label: {
+                Label(
+                    activeSession != nil ? "Stop" : "Start",
+                    systemImage: activeSession != nil ? "stop.fill" : "play.fill"
+                )
+                .font(.headline)
+                .frame(minWidth: 120)
+            }
+            .buttonStyle(.borderedProminent)
+            .controlSize(.large)
+            .disabled(activeSession == nil && selectedSeconds == 0)
+        }
+        .padding(.bottom, 20)
+        .animation(nil, value: activeSession?.id)
     }
 
     private func startFast() {
