@@ -4,16 +4,21 @@ Fasting tracker iOS app.
 
 ## Workflow Modes
 
-**CRITICAL**: Detect workflow mode from message prefix and follow the appropriate workflow:
+**CRITICAL**: Detect workflow mode from message prefix and **IMMEDIATELY invoke the appropriate Skill tool** as your FIRST action:
 
 ### Bug Fix Mode
 **Trigger**: Message starts with any of:
+- "Bug:"
 - "Bug fix:"
 - "Fix:"
 - "Hotfix:"
 - "Quick fix:"
 
-**Action**: Follow the `/bug-fix` skill workflow:
+**Action**: **IMMEDIATELY invoke Skill tool with skill="bug-fix"**
+```
+Use Skill tool: skill="bug-fix"
+```
+This provides:
 - Jump directly to implementation
 - No extensive planning or TodoWrite
 - No Explore agents
@@ -27,7 +32,11 @@ Fasting tracker iOS app.
 - "Add:"
 - "Plan and implement:"
 
-**Action**: Follow the `/feature` skill workflow:
+**Action**: **IMMEDIATELY invoke Skill tool with skill="feature"**
+```
+Use Skill tool: skill="feature"
+```
+This provides:
 - **REQUIRED**: Extensive planning before any implementation
 - Use multiple Explore agents to scan the codebase
 - Create detailed specification/PRD
