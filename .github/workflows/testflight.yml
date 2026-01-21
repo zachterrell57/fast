@@ -19,10 +19,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Select Xcode
-        run: |
-          ls /Applications/ | grep Xcode
-          sudo xcode-select -s /Applications/Xcode_16.app || sudo xcode-select -s /Applications/Xcode.app
-          xcodebuild -version
+        run: sudo xcode-select -s /Applications/Xcode_16.1.app
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
