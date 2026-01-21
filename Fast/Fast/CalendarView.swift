@@ -11,6 +11,8 @@ import SwiftUI
 
 struct CalendarSection: View {
     let fastedDates: Set<DateComponents>
+    @Binding var selectedDate: Date?
+    let onDateSelected: (Date) -> Void
     @State private var isExpanded = false
 
     private var contentAnimation: Animation {
@@ -21,13 +23,13 @@ struct CalendarSection: View {
         VStack(spacing: 4) {
             ZStack {
                 if isExpanded {
-                    CalendarView(fastedDates: fastedDates)
+                    CalendarView(fastedDates: fastedDates, selectedDate: $selectedDate, onDateSelected: onDateSelected)
                         .transition(.modifier(
                             active: BlurScaleModifier(blur: 8, scale: 0.95, opacity: 0),
                             identity: BlurScaleModifier(blur: 0, scale: 1, opacity: 1)
                         ))
                 } else {
-                    CompactWeekView(fastedDates: fastedDates)
+                    CompactWeekView(fastedDates: fastedDates, selectedDate: $selectedDate, onDateSelected: onDateSelected)
                         .transition(.modifier(
                             active: BlurScaleModifier(blur: 8, scale: 1.05, opacity: 0),
                             identity: BlurScaleModifier(blur: 0, scale: 1, opacity: 1)
@@ -72,6 +74,8 @@ struct BlurScaleModifier: ViewModifier {
 
 struct CompactWeekView: View {
     let fastedDates: Set<DateComponents>
+    @Binding var selectedDate: Date?
+    let onDateSelected: (Date) -> Void
 
     private let calendar = Calendar.current
     private let daysOfWeek = ["S", "M", "T", "W", "T", "F", "S"]
@@ -91,7 +95,13 @@ struct CompactWeekView: View {
                         .font(.caption)
                         .foregroundStyle(.secondary)
 
-                    DayCell(date: date, isFasted: isFasted(date), isToday: isToday(date))
+                    DayCell(
+                        date: date,
+                        isFasted: isFasted(date),
+                        isToday: isToday(date),
+                        isSelected: isSelected(date),
+                        onTap: { onDateSelected(date) }
+                    )
                 }
                 .frame(maxWidth: .infinity)
             }
@@ -113,12 +123,19 @@ struct CompactWeekView: View {
     private func isToday(_ date: Date) -> Bool {
         calendar.isDateInToday(date)
     }
+
+    private func isSelected(_ date: Date) -> Bool {
+        guard let selected = selectedDate else { return false }
+        return calendar.isDate(date, inSameDayAs: selected)
+    }
 }
 
 // MARK: - Full Calendar View
 
 struct CalendarView: View {
     let fastedDates: Set<DateComponents>
+    @Binding var selectedDate: Date?
+    let onDateSelected: (Date) -> Void
     @State private var displayedMonth: Date = Date()
 
     private let calendar = Calendar.current
@@ -165,7 +182,13 @@ struct CalendarView: View {
             LazyVGrid(columns: columns, spacing: 8) {
                 ForEach(daysInMonth, id: \.self) { date in
                     if let date = date {
-                        DayCell(date: date, isFasted: isFasted(date), isToday: isToday(date))
+                        DayCell(
+                            date: date,
+                            isFasted: isFasted(date),
+                            isToday: isToday(date),
+                            isSelected: isSelected(date),
+                            onTap: { onDateSelected(date) }
+                        )
                     } else {
                         Text("")
                             .frame(height: 32)
@@ -223,29 +246,50 @@ struct CalendarView: View {
     private func isToday(_ date: Date) -> Bool {
         calendar.isDateInToday(date)
     }
+
+    private func isSelected(_ date: Date) -> Bool {
+        guard let selected = selectedDate else { return false }
+        return calendar.isDate(date, inSameDayAs: selected)
+    }
 }
 
 struct DayCell: View {
     let date: Date
     let isFasted: Bool
     let isToday: Bool
+    var isSelected: Bool = false
+    var onTap: (() -> Void)? = nil
 
     private let calendar = Calendar.current
 
     var body: some View {
-        ZStack {
-            if isFasted {
-                Circle()
-                    .fill(Color.blue)
-            } else if isToday {
-                Circle()
-                    .stroke(Color.blue, lineWidth: 1)
-            }
+        Button {
+            onTap?()
+        } label: {
+            ZStack {
+                if isSelected {
+                    // Selected state - ring around the day
+                    Circle()
+                        .stroke(Color.accentColor, lineWidth: 3)
+                }
 
-            Text("\(calendar.component(.day, from: date))")
-                .font(.subheadline)
-                .foregroundStyle(isFasted ? .white : .primary)
+                if isFasted {
+                    Circle()
+                        .fill(Color.blue)
+                        .padding(isSelected ? 3 : 0)
+                } else if isToday {
+                    Circle()
+                        .stroke(Color.blue, lineWidth: 1)
+                        .padding(isSelected ? 3 : 0)
+                }
+
+                Text("\(calendar.component(.day, from: date))")
+                    .font(.subheadline)
+                    .foregroundStyle(isFasted ? .white : .primary)
+            }
         }
+        .buttonStyle(.plain)
         .frame(height: 32)
+        .disabled(!isFasted)  // Only fasted days are tappable
     }
 }
