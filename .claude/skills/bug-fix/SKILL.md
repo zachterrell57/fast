@@ -24,9 +24,10 @@ You are in **quick-fix mode**. Follow this streamlined workflow:
    - Build the app if it's a UI change (per CLAUDE.md)
    - Ensure no regressions
 
-4. **Commit**
+4. **Commit and push to main**
    - Create a clear, concise commit message
    - Focus on what was fixed and why
+   - Push directly to main (triggers TestFlight deployment automatically)
 
 ## Guidelines
 
@@ -46,3 +47,4 @@ Response:
 3. Add proper nil check or empty state handling
 4. Build and run in simulator to verify
 5. Commit with message like "Fix crash on empty fasting list"
+6. Push to main (auto-deploys to TestFlight)
