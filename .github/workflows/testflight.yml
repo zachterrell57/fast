@@ -34,6 +34,11 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.MATCH_SSH_KEY }}
 
+      - name: Test SSH Connection
+        run: |
+          ssh-add -l
+          ssh -T git@github.com || true
+
       - name: Deploy to TestFlight
         env:
           APPLE_ID: ${{ secrets.APPLE_ID }}
