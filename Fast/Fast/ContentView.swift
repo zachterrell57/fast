@@ -132,17 +132,13 @@ struct ContentView: View {
                     selectedDate: $selectedDate,
                     onDateSelected: { date in
                         withAnimation {
-                            // Only allow selecting dates with completed fasts
-                            let components = calendar.dateComponents([.year, .month, .day], from: date)
-                            if fastedDates.contains(components) {
-                                // If tapping today, clear selectedDate to show "Start New Fast" button
-                                if calendar.isDateInToday(date) {
-                                    selectedDate = nil
-                                } else {
-                                    selectedDate = date
-                                }
-                                showingNewFastAfterSummary = false
+                            // Allow selecting any past date (including today)
+                            if calendar.isDateInToday(date) {
+                                selectedDate = nil
+                            } else {
+                                selectedDate = date
                             }
+                            showingNewFastAfterSummary = false
                         }
                     }
                 )
@@ -159,6 +155,9 @@ struct ContentView: View {
                             showingNewFastAfterSummary = true
                         }
                     }
+                } else if selectedDate != nil && sessionForSelectedDate == nil {
+                    // Empty state for past date with no fast
+                    emptyStateView
                 } else {
                     // Timer/dial view
                     timerView
@@ -337,6 +336,36 @@ struct ContentView: View {
         }
         .padding(.bottom, 20)
         .animation(nil, value: activeSession?.id)
+    }
+
+    @ViewBuilder
+    private var emptyStateView: some View {
+        VStack(spacing: 24) {
+            Spacer()
+
+            ZStack {
+                Circle()
+                    .stroke(Color(.systemGray5), lineWidth: 8)
+
+                VStack(spacing: 8) {
+                    Image(systemName: "moon.zzz")
+                        .font(.system(size: 32))
+                        .foregroundColor(.secondary)
+
+                    Text("No fast")
+                        .font(.title3)
+                        .foregroundColor(.secondary)
+                }
+            }
+            .frame(width: 220, height: 220)
+
+            Text("No fasting activity on this day")
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+
+            Spacer()
+        }
+        .padding(.bottom, 20)
     }
 
     private func startFast() {
