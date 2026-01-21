@@ -34,7 +34,9 @@
       "Bash(git rm:*)",
       "Bash(gh run watch:*)",
       "Bash(gh run list:*)",
-      "Bash(gh run view:*)"
+      "Bash(gh run view:*)",
+      "Bash(xargs:*)",
+      "Bash(convert:*)"
     ]
   }
 }
