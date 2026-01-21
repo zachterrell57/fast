@@ -25,7 +25,13 @@
       "mcp__xcodebuildmcp__show_build_settings",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(bundle lock:*)",
+      "Bash(bundle update:*)",
+      "Bash(bundle install:*)",
+      "Bash(gem list:*)",
+      "Bash(gem uninstall:*)",
+      "Bash(git rm:*)"
     ]
   }
 }

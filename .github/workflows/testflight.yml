@@ -25,7 +25,9 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.2'
-          bundler-cache: true
+
+      - name: Install Fastlane
+        run: bundle install
 
       - name: Setup SSH for Match
         uses: webfactory/ssh-agent@v0.9.0
