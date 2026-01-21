@@ -26,13 +26,27 @@ platform :ios do
       readonly: is_ci
     )
 
+    # Update code signing to use match profile
+    update_code_signing_settings(
+      use_automatic_signing: false,
+      path: "Fast/Fast.xcodeproj",
+      team_id: "25P22K2K3W",
+      profile_name: "match AppStore zachterrell.Fast",
+      code_sign_identity: "Apple Distribution"
+    )
+
     # Build the app
     build_app(
       scheme: "Fast",
       project: "Fast/Fast.xcodeproj",
       export_method: "app-store",
       output_directory: "./build",
-      output_name: "Fast.ipa"
+      output_name: "Fast.ipa",
+      export_options: {
+        provisioningProfiles: {
+          "zachterrell.Fast" => "match AppStore zachterrell.Fast"
+        }
+      }
     )
 
     # Upload to TestFlight
