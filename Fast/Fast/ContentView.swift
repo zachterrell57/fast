@@ -49,14 +49,25 @@ struct ContentView: View {
     }
 
     /// Session completed today (for showing summary after completion)
+    /// Checks endAt instead of startAt to handle overnight fasts correctly
     private var todayCompletedSession: FastSession? {
-        completedSessions.first { calendar.isDateInToday($0.startAt) }
+        completedSessions
+            .filter { session in
+                guard let endAt = session.endAt else { return false }
+                return calendar.isDateInToday(endAt)
+            }
+            .sorted { ($0.endAt ?? .distantPast) > ($1.endAt ?? .distantPast) }
+            .first
     }
 
     /// Session for the selected date (when viewing past dates from calendar)
+    /// Returns the most recent session if multiple fasts occurred on that day
     private var sessionForSelectedDate: FastSession? {
         guard let date = selectedDate else { return nil }
-        return completedSessions.first { calendar.isDate($0.startAt, inSameDayAs: date) }
+        return completedSessions
+            .filter { calendar.isDate($0.startAt, inSameDayAs: date) }
+            .sorted { $0.startAt > $1.startAt }
+            .first
     }
 
     /// Whether we're viewing today or a past date
@@ -66,12 +77,12 @@ struct ContentView: View {
 
     /// Whether to show the summary view
     private var shouldShowSummary: Bool {
-        // Never show summary if there's an active fast
+        // Allow viewing past date summaries even during active fast
+        if selectedDate != nil && sessionForSelectedDate != nil { return true }
+        // Never show today's summary if there's an active fast
         if activeSession != nil { return false }
         // Don't show if user just tapped "Start New Fast"
         if showingNewFastAfterSummary { return false }
-        // Show if viewing a past date with a completed session
-        if selectedDate != nil && sessionForSelectedDate != nil { return true }
         // Show if today has a completed session
         return todayCompletedSession != nil
     }
@@ -124,7 +135,12 @@ struct ContentView: View {
                             // Only allow selecting dates with completed fasts
                             let components = calendar.dateComponents([.year, .month, .day], from: date)
                             if fastedDates.contains(components) {
-                                selectedDate = date
+                                // If tapping today, clear selectedDate to show "Start New Fast" button
+                                if calendar.isDateInToday(date) {
+                                    selectedDate = nil
+                                } else {
+                                    selectedDate = date
+                                }
                                 showingNewFastAfterSummary = false
                             }
                         }
@@ -164,6 +180,8 @@ struct ContentView: View {
                 timerEngine.stop()
                 selectedSeconds = 0
                 selectedPreset = nil
+                // Reset so summary view appears for the newly completed fast
+                showingNewFastAfterSummary = false
             }
         }
         .toolbar {
@@ -340,6 +358,8 @@ struct ContentView: View {
             modelContext.delete(session)
         } else {
             session.endAt = Date()
+            // Reset so summary view appears for the completed fast
+            showingNewFastAfterSummary = false
         }
 
         timerEngine.stop()
