@@ -36,7 +36,9 @@
       "Bash(gh run list:*)",
       "Bash(gh run view:*)",
       "Bash(xargs:*)",
-      "Bash(convert:*)"
+      "Bash(convert:*)",
+      "Bash(sips:*)",
+      "Bash(magick:*)"
     ]
   }
 }
