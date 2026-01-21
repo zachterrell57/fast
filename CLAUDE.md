@@ -4,47 +4,22 @@ Fasting tracker iOS app.
 
 ## Workflow Modes
 
-**CRITICAL**: Detect workflow mode from message prefix and **IMMEDIATELY invoke the appropriate Skill tool** as your FIRST action:
+**CRITICAL**: Detect workflow mode from message content and **IMMEDIATELY invoke the appropriate Skill tool** as your FIRST action:
 
 ### Bug Fix Mode
-**Trigger**: Message contains the word "bug" (case-insensitive) OR starts with:
-- "Fix:"
-- "Hotfix:"
-- "Quick fix:"
+**Trigger**: Message contains the word "bug" (case-insensitive) OR starts with "Fix:", "Hotfix:", or "Quick fix:"
 
-**Action**: **IMMEDIATELY invoke Skill tool with skill="bug-fix"**
-```
-Use Skill tool: skill="bug-fix"
-```
-This provides:
-- Jump directly to implementation
-- No extensive planning or TodoWrite
-- No Explore agents
-- Quick diagnosis → minimal fix → test → commit
-- Focus and speed over comprehensive analysis
+**Action**: **IMMEDIATELY invoke** `Skill tool: skill="bug-fix"`
 
 ### Feature Development Mode
-**Trigger**: Message starts with any of:
-- "Feature:"
-- "Implement:"
-- "Add:"
-- "Plan and implement:"
+**Trigger**: Message starts with "Feature:", "Implement:", "Add:", or "Plan and implement:"
 
-**Action**: **IMMEDIATELY invoke Skill tool with skill="feature"**
-```
-Use Skill tool: skill="feature"
-```
-This provides:
-- **REQUIRED**: Extensive planning before any implementation
-- Use multiple Explore agents to scan the codebase
-- Create detailed specification/PRD
-- Use TodoWrite to track all steps
-- Present plan and get approval before implementing
-- Deep reasoning about tradeoffs and alternatives
-- Comprehensive testing and documentation
+**Action**: **IMMEDIATELY invoke** `Skill tool: skill="feature"`
 
 ### Default Behavior
 If no prefix is detected, ask the user which mode they want, or infer from context (simple fixes = bug mode, new functionality = feature mode).
+
+See `.claude/skills/` for detailed workflow definitions.
 
 ## Workflow
 
