@@ -42,8 +42,6 @@ platform :ios do
       export_method: "app-store",
       output_directory: "./build",
       output_name: "Fast.ipa",
-      sdk: "iphoneos",
-      clean: true,
       export_options: {
         provisioningProfiles: {
           "zachterrell.Fast" => "match AppStore zachterrell.Fast"
