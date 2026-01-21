@@ -270,16 +270,16 @@ struct DayCell: View {
                 if isSelected {
                     // Selected state - ring around the day
                     Circle()
-                        .stroke(Color.accentColor, lineWidth: 3)
+                        .stroke(Color.primary, lineWidth: 3)
                 }
 
                 if isFasted {
                     Circle()
-                        .fill(Color.blue)
+                        .fill(Color.primary)
                         .padding(isSelected ? 3 : 0)
                 } else if isToday {
                     Circle()
-                        .stroke(Color.blue, lineWidth: 1)
+                        .stroke(Color.primary, lineWidth: 1)
                         .padding(isSelected ? 3 : 0)
                 }
 

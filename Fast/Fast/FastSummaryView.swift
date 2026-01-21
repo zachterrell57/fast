@@ -88,7 +88,7 @@ struct FastSummaryView: View {
                 Circle()
                     .trim(from: 0, to: progress)
                     .stroke(
-                        goalReached ? Color.green : Color.orange,
+                        Color.primary,
                         style: StrokeStyle(lineWidth: 8, lineCap: .round)
                     )
                     .rotationEffect(.degrees(-90))
@@ -99,7 +99,7 @@ struct FastSummaryView: View {
                     if goalReached {
                         Image(systemName: "checkmark")
                             .font(.system(size: 24, weight: .bold))
-                            .foregroundColor(.green)
+                            .foregroundColor(.primary)
                     }
 
                     // Duration
@@ -110,7 +110,7 @@ struct FastSummaryView: View {
                     // Percentage
                     Text(percentageText)
                         .font(.subheadline)
-                        .foregroundColor(goalReached ? .green : .orange)
+                        .foregroundColor(.primary)
                 }
             }
             .frame(width: 220, height: 220)

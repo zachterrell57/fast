@@ -231,13 +231,13 @@ struct ContentView: View {
                 // Progress circle
                 Circle()
                     .trim(from: 0, to: progress)
-                    .stroke(Color.accentColor, style: StrokeStyle(lineWidth: 8, lineCap: .round))
+                    .stroke(Color.primary, style: StrokeStyle(lineWidth: 8, lineCap: .round))
                     .rotationEffect(.degrees(-90))
 
                 // Draggable handle (only when not active)
                 if activeSession == nil {
                     Circle()
-                        .fill(Color.red)
+                        .fill(Color.primary)
                         .frame(width: 24, height: 24)
                         .shadow(radius: 2)
                         .offset(y: -110)
@@ -288,7 +288,7 @@ struct ContentView: View {
                             .padding(.vertical, 8)
                             .background(
                                 Capsule()
-                                    .fill(selectedPreset == preset.seconds ? Color.accentColor : Color(.systemGray5))
+                                    .fill(selectedPreset == preset.seconds ? Color.primary : Color(.systemGray5))
                             )
                             .foregroundColor(selectedPreset == preset.seconds ? .white : .primary)
                     }
