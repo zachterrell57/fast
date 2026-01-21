@@ -108,24 +108,6 @@ struct ContentView: View {
         NavigationStack {
             GeometryReader { geometry in
             VStack(spacing: 0) {
-                // Back to Today button (when viewing past date)
-                if !isViewingToday {
-                    Button {
-                        withAnimation {
-                            selectedDate = nil
-                        }
-                    } label: {
-                        HStack(spacing: 4) {
-                            Image(systemName: "chevron.left")
-                            Text("Today")
-                        }
-                        .font(.subheadline)
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal)
-                    .padding(.top, 8)
-                }
-
                 // Calendar section (compact by default, expandable)
                 CalendarSection(
                     fastedDates: fastedDates,
