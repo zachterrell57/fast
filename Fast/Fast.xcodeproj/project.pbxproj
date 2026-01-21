@@ -29,9 +29,22 @@
 		2E8A4E2C2E0757CC0067092A /* FastUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FastUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		2E8A4E402E0757CD0067092B /* Exceptions for "Fast" */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 2E8A4E112E0757CB0067092A /* Fast */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		2E8A4E142E0757CB0067092A /* Fast */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				2E8A4E402E0757CD0067092B /* Exceptions for "Fast" */,
+			);
 			path = Fast;
 			sourceTree = "<group>";
 		};
