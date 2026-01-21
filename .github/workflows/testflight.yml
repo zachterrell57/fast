@@ -2,7 +2,9 @@ name: Deploy to TestFlight
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+      - 'preview/**'  # Auto-deploy feature preview branches
   workflow_dispatch:
 
 concurrency:

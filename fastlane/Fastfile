@@ -49,9 +49,23 @@ platform :ios do
       }
     )
 
+    # Determine TestFlight group based on branch
+    branch_name = ENV['GITHUB_REF_NAME'] || `git rev-parse --abbrev-ref HEAD`.strip
+    is_preview = branch_name.start_with?('preview/')
+
+    testflight_groups = if is_preview
+      ["Internal"]  # Feature preview builds go to Internal group
+    else
+      nil  # Main branch uses default external testers
+    end
+
+    changelog = is_preview ? "Preview build from branch: #{branch_name}" : nil
+
     # Upload to TestFlight
     upload_to_testflight(
       api_key: api_key,
+      groups: testflight_groups,
+      changelog: changelog,
       skip_waiting_for_build_processing: true
     )
   end
