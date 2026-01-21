@@ -1,74 +1,64 @@
 # Fast
 
-A **minimal**, **free**, *on‑device* fasting tracker for iPhone, built with SwiftUI. Fast shows a large count‑up timer for your current fast and logs past fasts in a month‑view calendar. No accounts, no cloud, no ads—just tap **Start**, tap **End**, done.
+A **minimal**, **free**, *on‑device* fasting tracker for iPhone, built with SwiftUI. Fast features a countdown timer with goal selection, an expandable history calendar, and local notifications. No accounts, no cloud, no ads—just select your goal, tap **Start**, and track your progress.
 
 ---
 
-## MVP Specification
+## Features
 
-### Objective
+### Core Functionality
 
-Deliver the simplest useful fasting app: manual start/stop, local history, monochrome UI. Everything else (notifications, HealthKit, sync, goal targets) is deferred.
+1. **Goal Duration Selection** – choose via circular dial or preset buttons (12h, 16h, 18h)
+2. **Countdown Timer** – circular progress indicator with target duration countdown
+3. **Smart History Calendar** – compact 7-day view that expands to full month grid; highlights fasting days
+4. **Local Persistence** – SwiftData for all session data stored on device
+5. **Push Notifications** – local notification when your fast completes
+6. **Minimal UI** – monochrome design with SF Symbols; respects system dark/light modes
 
-### Core Features
+### In Development
 
-1. **Manual Start / End Fast** – exactly one active fast at a time.
-2. **Large Timer Screen** – count‑up only; no goal countdown in MVP.
-3. **History Calendar** – month grid highlighting fasting days; tap a date for details, edit, or delete.
-4. **Local Persistence** – SwiftData (Core Data) on device.
-5. **Imperial‑Only Units** – no metric toggle needed yet.
-6. **Minimal Monochrome UI** – native SF font & symbols; system dark/light modes.
+See `TRACKER.md` for current work:
+* Fast detail modal (view, edit, delete individual sessions)
+* Design polish & app icon
+* Manual test plan / QA checklist
 
-### Backlog (Post‑MVP)
+### Future Roadmap
 
-* Goal duration picker & progress nudges
-* Local push notifications
-* HealthKit write/read
-* iCloud sync
-* Preset fasting protocols
-* Accessibility polish beyond system defaults
+* HealthKit integration (read/write fasting data)
+* iCloud sync across devices
+* Additional preset protocols
+* Accessibility enhancements
 
 ### Data Model
 
 ```swift
-struct FastSession: Identifiable {
-    var id: UUID = .init()
+@Model
+class FastSession {
+    var id: UUID
     var startAt: Date
     var endAt: Date? // nil while active
-    // computed duration when endAt != nil
+    var targetDuration: TimeInterval // goal duration in seconds
+    // computed: elapsedDuration, remainingDuration, isActive, isComplete
 }
 ```
 
-### Screens & Navigation
+### Architecture
 
-| Tab | Screen        | Key Elements                                    |
-| --- | ------------- | ----------------------------------------------- |
-| 1   | **TimerView** | Large digital timer, Start/End button           |
-| 2   | **History**   | SwiftUI `Calendar` month grid, FastDetail sheet |
-
-Navigation via `TabView`; shared `@Observable` `AppState` holds active fast.
-
-
-### Risks & Mitigations
-
-| Risk                 | Mitigation                                            |
-| -------------------- | ----------------------------------------------------- |
-| Timer drift / resume | Compute elapsed = `Date().timeIntervalSince(startAt)` |
-| Calendar perf        | Fetch only displayed month via predicate              |
-
-### Success Metrics
-
-* Time‑to‑first‑fast < 30 s
-* Crash‑free sessions > 99.5%
+* **Single-screen UI** – expandable calendar section + timer/controls in one view
+* **SwiftData** – persistence with @Query and @Environment(\.modelContext)
+* **TimerEngine** – handles countdown refresh and background/foreground transitions
+* **NotificationManager** – schedules local notification for fast completion
 
 ---
 
 ## Repository Layout
 
 ```
-Fast/           ← Xcode project
-README.md       ← This spec (static, rarely edited)
+Fast/           ← Xcode project & source files
+fastlane/       ← CI/CD automation scripts
+README.md       ← Project overview (this file)
 TRACKER.md      ← Living kanban board (update often)
+CLAUDE.md       ← AI agent workflow instructions
 ```
 
 ## Contributing
