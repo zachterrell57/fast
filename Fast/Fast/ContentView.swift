@@ -217,6 +217,21 @@ struct ContentView: View {
         return String(format: "%02d:%02d:%02d", hours, minutes, seconds)
     }
 
+    private var startTimeFormatted: String {
+        guard let session = activeSession else { return "" }
+        let formatter = DateFormatter()
+        formatter.dateFormat = "h:mm a"
+        return formatter.string(from: session.startAt)
+    }
+
+    private var endTimeFormatted: String {
+        guard let session = activeSession else { return "" }
+        let endTime = session.startAt.addingTimeInterval(session.targetDuration)
+        let formatter = DateFormatter()
+        formatter.dateFormat = "h:mm a"
+        return formatter.string(from: endTime)
+    }
+
     @ViewBuilder
     private var timerView: some View {
         VStack(spacing: 24) {
@@ -244,10 +259,37 @@ struct ContentView: View {
                         .rotationEffect(.degrees(handleAngle))
                 }
 
-                // Timer text
-                Text(formattedTime)
-                    .font(.system(size: 48, weight: .light, design: .rounded))
-                    .monospacedDigit()
+                // Timer text and time info
+                VStack(spacing: 8) {
+                    Text(formattedTime)
+                        .font(.system(size: 48, weight: .light, design: .rounded))
+                        .monospacedDigit()
+
+                    // Start and end times (only when fasting)
+                    if activeSession != nil {
+                        HStack(spacing: 12) {
+                            VStack(spacing: 2) {
+                                Text("Started")
+                                    .font(.caption2)
+                                    .foregroundColor(.secondary)
+                                Text(startTimeFormatted)
+                                    .font(.caption.weight(.medium))
+                            }
+
+                            Image(systemName: "arrow.right")
+                                .font(.caption2)
+                                .foregroundColor(.secondary)
+
+                            VStack(spacing: 2) {
+                                Text("Ends")
+                                    .font(.caption2)
+                                    .foregroundColor(.secondary)
+                                Text(endTimeFormatted)
+                                    .font(.caption.weight(.medium))
+                            }
+                        }
+                    }
+                }
             }
             .frame(width: 220, height: 220)
             .gesture(
