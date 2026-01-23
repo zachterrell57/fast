@@ -67,6 +67,11 @@ struct ContentView: View {
     /// Returns the most recent session if multiple fasts occurred on that day
     private var sessionForSelectedDate: FastSession? {
         guard let date = selectedDate else { return nil }
+        return sessionFor(date: date)
+    }
+
+    /// Get session for any arbitrary date
+    private func sessionFor(date: Date) -> FastSession? {
         return completedSessions
             .filter { calendar.isDate($0.startAt, inSameDayAs: date) }
             .sorted { $0.startAt > $1.startAt }
@@ -83,14 +88,24 @@ struct ContentView: View {
         selectedDate ?? calendar.startOfDay(for: Date())
     }
 
+    /// Previous day (further into the past)
+    private var previousDate: Date {
+        calendar.date(byAdding: .day, value: -1, to: currentDisplayDate)!
+    }
+
+    /// Next day (toward today) - nil if already on today
+    private var nextDate: Date? {
+        guard !isViewingToday else { return nil }
+        let next = calendar.date(byAdding: .day, value: 1, to: currentDisplayDate)!
+        return next
+    }
+
     /// Navigate to the previous day (further into the past)
     private func goToPreviousDay() {
         let newDate = calendar.date(byAdding: .day, value: -1, to: currentDisplayDate)!
         swipeFeedback.impactOccurred()
-        withAnimation(.easeInOut(duration: 0.25)) {
-            selectedDate = newDate
-            showingNewFastAfterSummary = false
-        }
+        selectedDate = newDate
+        showingNewFastAfterSummary = false
     }
 
     /// Navigate to the next day (toward today)
@@ -98,14 +113,12 @@ struct ContentView: View {
         guard !isViewingToday else { return }
         let newDate = calendar.date(byAdding: .day, value: 1, to: currentDisplayDate)!
         swipeFeedback.impactOccurred()
-        withAnimation(.easeInOut(duration: 0.25)) {
-            if calendar.isDateInToday(newDate) {
-                selectedDate = nil
-            } else {
-                selectedDate = newDate
-            }
-            showingNewFastAfterSummary = false
+        if calendar.isDateInToday(newDate) {
+            selectedDate = nil
+        } else {
+            selectedDate = newDate
         }
+        showingNewFastAfterSummary = false
     }
 
     /// Whether to show the summary view
@@ -155,65 +168,90 @@ struct ContentView: View {
                         showingNewFastAfterSummary = false
                     }
                 )
+                .padding(.top, 12)
 
-                // Main content area - swipeable for day navigation
-                Group {
-                    if shouldShowSummary, let session = summarySession {
-                        // Summary view for completed fast
-                        FastSummaryView(
-                            session: session,
-                            isToday: isViewingToday
-                        ) {
-                            // "Start New Fast" callback
-                            withAnimation {
-                                showingNewFastAfterSummary = true
-                            }
+                // Main content area - paging day navigation
+                GeometryReader { contentGeometry in
+                    let pageWidth = contentGeometry.size.width
+
+                    HStack(spacing: 0) {
+                        // Previous day (to the left)
+                        dayContent(for: previousDate, isToday: false)
+                            .frame(width: pageWidth)
+
+                        // Current day (center)
+                        dayContent(for: currentDisplayDate, isToday: isViewingToday)
+                            .frame(width: pageWidth)
+
+                        // Next day (to the right) - or empty if on today
+                        if let next = nextDate {
+                            dayContent(for: next, isToday: calendar.isDateInToday(next))
+                                .frame(width: pageWidth)
+                        } else {
+                            // Placeholder for today - nothing to the right
+                            Color.clear
+                                .frame(width: pageWidth)
                         }
-                    } else if selectedDate != nil && sessionForSelectedDate == nil {
-                        // Empty state for past date with no fast
-                        emptyStateView
-                    } else {
-                        // Timer/dial view
-                        timerView
                     }
+                    .offset(x: -pageWidth + swipeOffset)  // Start showing current (middle) page
+                    .gesture(
+                        DragGesture(minimumDistance: 20)
+                            .onChanged { value in
+                                let horizontal = abs(value.translation.width)
+                                let vertical = abs(value.translation.height)
+                                guard horizontal > vertical * 1.2 else { return }
+
+                                // Prevent swiping right (to future) when on today
+                                if isViewingToday && value.translation.width > 0 {
+                                    swipeOffset = value.translation.width * 0.3  // Rubber band effect
+                                } else {
+                                    swipeOffset = value.translation.width
+                                }
+                            }
+                            .onEnded { value in
+                                let horizontal = abs(value.translation.width)
+                                let vertical = abs(value.translation.height)
+                                let velocityThreshold: CGFloat = 500
+
+                                // Check if swipe should trigger page change
+                                let shouldChangePage = horizontal > pageWidth * 0.3 ||
+                                    abs(value.predictedEndTranslation.width) > velocityThreshold
+
+                                if shouldChangePage && horizontal > vertical {
+                                    if value.translation.width > 0 && !isViewingToday {
+                                        // Swiped right - go to next day (toward today)
+                                        withAnimation(.easeOut(duration: 0.25)) {
+                                            swipeOffset = pageWidth
+                                        }
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                                            swipeOffset = 0
+                                            goToNextDay()
+                                        }
+                                    } else if value.translation.width < 0 {
+                                        // Swiped left - go to previous day (into past)
+                                        withAnimation(.easeOut(duration: 0.25)) {
+                                            swipeOffset = -pageWidth
+                                        }
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                                            swipeOffset = 0
+                                            goToPreviousDay()
+                                        }
+                                    } else {
+                                        // Rubber band back
+                                        withAnimation(.easeOut(duration: 0.2)) {
+                                            swipeOffset = 0
+                                        }
+                                    }
+                                } else {
+                                    // Snap back
+                                    withAnimation(.easeOut(duration: 0.2)) {
+                                        swipeOffset = 0
+                                    }
+                                }
+                            }
+                    )
                 }
-                .offset(x: swipeOffset)
-                .gesture(
-                    DragGesture()
-                        .onChanged { value in
-                            // Only allow horizontal swipes, not when interacting with dial
-                            let horizontal = abs(value.translation.width)
-                            let vertical = abs(value.translation.height)
-                            guard horizontal > vertical else { return }
-
-                            // Prevent swiping right (to future) when on today
-                            if isViewingToday && value.translation.width > 0 {
-                                swipeOffset = value.translation.width * 0.3  // Rubber band effect
-                            } else {
-                                swipeOffset = value.translation.width
-                            }
-                        }
-                        .onEnded { value in
-                            let horizontal = abs(value.translation.width)
-                            let vertical = abs(value.translation.height)
-
-                            // Reset offset with animation
-                            withAnimation(.easeOut(duration: 0.2)) {
-                                swipeOffset = 0
-                            }
-
-                            // Only process horizontal swipes
-                            guard horizontal > vertical && horizontal > swipeThreshold else { return }
-
-                            if value.translation.width > 0 {
-                                // Swiped right - go to next day (toward today)
-                                goToNextDay()
-                            } else {
-                                // Swiped left - go to previous day (into past)
-                                goToPreviousDay()
-                            }
-                        }
-                )
+                .clipped()
             }
         }
         .onAppear {
@@ -358,8 +396,8 @@ struct ContentView: View {
                     .offset(y: 40)
                 }
             }
-            .gesture(
-                DragGesture()
+            .highPriorityGesture(
+                DragGesture(minimumDistance: 5)
                     .onChanged { value in
                         guard activeSession == nil else { return }
                         let center = CGPoint(x: 130, y: 130)
@@ -430,6 +468,41 @@ struct ContentView: View {
         }
         .padding(.bottom, 20)
         .animation(nil, value: activeSession?.id)
+    }
+
+    /// Renders content for a specific date (used for paging)
+    @ViewBuilder
+    private func dayContent(for date: Date, isToday: Bool) -> some View {
+        let session = sessionFor(date: date)
+        let todaySession = isToday ? todayCompletedSession : nil
+
+        // Determine what to show for this date
+        if isToday {
+            // Today's logic
+            if activeSession != nil {
+                // Active fast running - show timer
+                timerView
+            } else if !showingNewFastAfterSummary, let completed = todaySession {
+                // Show today's completed fast summary
+                FastSummaryView(session: completed, isToday: true) {
+                    withAnimation {
+                        showingNewFastAfterSummary = true
+                    }
+                }
+            } else {
+                // Show timer/dial for starting new fast
+                timerView
+            }
+        } else {
+            // Past date logic
+            if let session = session {
+                FastSummaryView(session: session, isToday: false) {
+                    // No "Start New Fast" for past dates
+                }
+            } else {
+                emptyStateView
+            }
+        }
     }
 
     @ViewBuilder

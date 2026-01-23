@@ -16,6 +16,11 @@ Fasting tracker iOS app.
 
 **Action**: **IMMEDIATELY invoke** `Skill tool: skill="feature"`
 
+### Push Mode
+**Trigger**: Message is "push" or "/push" or "push to main" or similar
+
+**Action**: **IMMEDIATELY invoke** `Skill tool: skill="push"`
+
 ### Default Behavior
 If no prefix is detected, ask the user which mode they want, or infer from context (simple fixes = bug mode, new functionality = feature mode).
 

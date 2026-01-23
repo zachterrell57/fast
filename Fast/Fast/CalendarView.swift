@@ -106,7 +106,7 @@ struct CompactWeekView: View {
                 .frame(maxWidth: .infinity)
             }
         }
-        .padding(.horizontal)
+        .padding(.horizontal, 4)
         .padding(.vertical, 12)
     }
 
@@ -198,7 +198,8 @@ struct CalendarView: View {
                 }
             }
         }
-        .padding()
+        .padding(.horizontal, 4)
+        .padding(.vertical)
     }
 
     private var monthYearString: String {
