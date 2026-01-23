@@ -218,17 +218,24 @@ struct ContentView: View {
     }
 
     private var startTimeFormatted: String {
-        guard let session = activeSession else { return "" }
         let formatter = DateFormatter()
         formatter.dateFormat = "h:mm a"
-        return formatter.string(from: session.startAt)
+        if let session = activeSession {
+            return formatter.string(from: session.startAt)
+        }
+        // Preview mode: show current time
+        return formatter.string(from: Date())
     }
 
     private var endTimeFormatted: String {
-        guard let session = activeSession else { return "" }
-        let endTime = session.startAt.addingTimeInterval(session.targetDuration)
         let formatter = DateFormatter()
         formatter.dateFormat = "h:mm a"
+        if let session = activeSession {
+            let endTime = session.startAt.addingTimeInterval(session.targetDuration)
+            return formatter.string(from: endTime)
+        }
+        // Preview mode: show current time + selected duration
+        let endTime = Date().addingTimeInterval(TimeInterval(selectedSeconds))
         return formatter.string(from: endTime)
     }
 
@@ -265,11 +272,11 @@ struct ContentView: View {
                         .font(.system(size: 48, weight: .light, design: .rounded))
                         .monospacedDigit()
 
-                    // Start and end times (only when fasting)
-                    if activeSession != nil {
+                    // Start and end times (when fasting or selecting duration)
+                    if activeSession != nil || selectedSeconds > 0 {
                         HStack(spacing: 12) {
                             VStack(spacing: 2) {
-                                Text("Started")
+                                Text(activeSession != nil ? "Started" : "Starts")
                                     .font(.caption2)
                                     .foregroundColor(.secondary)
                                 Text(startTimeFormatted)
