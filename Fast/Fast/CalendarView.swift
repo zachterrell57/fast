@@ -151,6 +151,7 @@ struct CalendarView: View {
                 } label: {
                     Image(systemName: "chevron.left")
                         .font(.title3)
+                        .foregroundStyle(.primary)
                 }
 
                 Spacer()
@@ -165,6 +166,7 @@ struct CalendarView: View {
                 } label: {
                     Image(systemName: "chevron.right")
                         .font(.title3)
+                        .foregroundStyle(.primary)
                 }
             }
             .padding(.horizontal)
