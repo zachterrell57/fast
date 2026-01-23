@@ -40,9 +40,12 @@ struct ContentView: View {
     @State private var lastDialHour: Int = 0
     @State private var selectedDate: Date? = nil  // nil = today, set to view past dates
     @State private var showingNewFastAfterSummary: Bool = false  // Force show dial after "Start New Fast"
+    @State private var swipeOffset: CGFloat = 0  // Track horizontal swipe gesture
     private let maxDuration: TimeInterval = 24 * 3600 // 24 hours
     private let dialFeedback = UIImpactFeedbackGenerator(style: .light)
+    private let swipeFeedback = UIImpactFeedbackGenerator(style: .medium)
     private let calendar = Calendar.current
+    private let swipeThreshold: CGFloat = 50  // Minimum swipe distance to trigger navigation
 
     private var activeSession: FastSession? {
         activeSessions.first
@@ -73,6 +76,36 @@ struct ContentView: View {
     /// Whether we're viewing today or a past date
     private var isViewingToday: Bool {
         selectedDate == nil
+    }
+
+    /// The currently displayed date (resolves nil to today)
+    private var currentDisplayDate: Date {
+        selectedDate ?? calendar.startOfDay(for: Date())
+    }
+
+    /// Navigate to the previous day (further into the past)
+    private func goToPreviousDay() {
+        let newDate = calendar.date(byAdding: .day, value: -1, to: currentDisplayDate)!
+        swipeFeedback.impactOccurred()
+        withAnimation(.easeInOut(duration: 0.25)) {
+            selectedDate = newDate
+            showingNewFastAfterSummary = false
+        }
+    }
+
+    /// Navigate to the next day (toward today)
+    private func goToNextDay() {
+        guard !isViewingToday else { return }
+        let newDate = calendar.date(byAdding: .day, value: 1, to: currentDisplayDate)!
+        swipeFeedback.impactOccurred()
+        withAnimation(.easeInOut(duration: 0.25)) {
+            if calendar.isDateInToday(newDate) {
+                selectedDate = nil
+            } else {
+                selectedDate = newDate
+            }
+            showingNewFastAfterSummary = false
+        }
     }
 
     /// Whether to show the summary view
@@ -113,37 +146,74 @@ struct ContentView: View {
                     fastedDates: fastedDates,
                     selectedDate: $selectedDate,
                     onDateSelected: { date in
-                        withAnimation {
-                            // Allow selecting any past date (including today)
-                            if calendar.isDateInToday(date) {
-                                selectedDate = nil
-                            } else {
-                                selectedDate = date
-                            }
-                            showingNewFastAfterSummary = false
+                        // Allow selecting any past date (including today)
+                        if calendar.isDateInToday(date) {
+                            selectedDate = nil
+                        } else {
+                            selectedDate = date
                         }
+                        showingNewFastAfterSummary = false
                     }
                 )
 
-                // Main content area
-                if shouldShowSummary, let session = summarySession {
-                    // Summary view for completed fast
-                    FastSummaryView(
-                        session: session,
-                        isToday: isViewingToday
-                    ) {
-                        // "Start New Fast" callback
-                        withAnimation {
-                            showingNewFastAfterSummary = true
+                // Main content area - swipeable for day navigation
+                Group {
+                    if shouldShowSummary, let session = summarySession {
+                        // Summary view for completed fast
+                        FastSummaryView(
+                            session: session,
+                            isToday: isViewingToday
+                        ) {
+                            // "Start New Fast" callback
+                            withAnimation {
+                                showingNewFastAfterSummary = true
+                            }
                         }
+                    } else if selectedDate != nil && sessionForSelectedDate == nil {
+                        // Empty state for past date with no fast
+                        emptyStateView
+                    } else {
+                        // Timer/dial view
+                        timerView
                     }
-                } else if selectedDate != nil && sessionForSelectedDate == nil {
-                    // Empty state for past date with no fast
-                    emptyStateView
-                } else {
-                    // Timer/dial view
-                    timerView
                 }
+                .offset(x: swipeOffset)
+                .gesture(
+                    DragGesture()
+                        .onChanged { value in
+                            // Only allow horizontal swipes, not when interacting with dial
+                            let horizontal = abs(value.translation.width)
+                            let vertical = abs(value.translation.height)
+                            guard horizontal > vertical else { return }
+
+                            // Prevent swiping right (to future) when on today
+                            if isViewingToday && value.translation.width > 0 {
+                                swipeOffset = value.translation.width * 0.3  // Rubber band effect
+                            } else {
+                                swipeOffset = value.translation.width
+                            }
+                        }
+                        .onEnded { value in
+                            let horizontal = abs(value.translation.width)
+                            let vertical = abs(value.translation.height)
+
+                            // Reset offset with animation
+                            withAnimation(.easeOut(duration: 0.2)) {
+                                swipeOffset = 0
+                            }
+
+                            // Only process horizontal swipes
+                            guard horizontal > vertical && horizontal > swipeThreshold else { return }
+
+                            if value.translation.width > 0 {
+                                // Swiped right - go to next day (toward today)
+                                goToNextDay()
+                            } else {
+                                // Swiped left - go to previous day (into past)
+                                goToPreviousDay()
+                            }
+                        }
+                )
             }
         }
         .onAppear {
@@ -184,6 +254,9 @@ struct ContentView: View {
                         }
                     }
                     #endif
+            }
+            ToolbarItem(placement: .topBarTrailing) {
+                StatsView(completedSessions: completedSessions)
             }
         }
         }
@@ -361,13 +434,8 @@ struct ContentView: View {
 
     @ViewBuilder
     private var emptyStateView: some View {
-        VStack(spacing: 24) {
-            Spacer()
-
-            ZStack {
-                Circle()
-                    .stroke(Color(.systemGray5), lineWidth: 8)
-
+        VStack(spacing: 0) {
+            TimerRing(progress: 0) {
                 VStack(spacing: 8) {
                     Image(systemName: "moon.zzz")
                         .font(.system(size: 32))
@@ -378,13 +446,15 @@ struct ContentView: View {
                         .foregroundColor(.secondary)
                 }
             }
-            .frame(width: 220, height: 220)
+            .frame(maxHeight: .infinity)
 
-            Text("No fasting activity on this day")
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-
-            Spacer()
+            // Bottom content - fixed height for consistent layout
+            VStack {
+                Text("No fasting activity on this day")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+            }
+            .frame(height: 120)
         }
         .padding(.bottom, 20)
     }
