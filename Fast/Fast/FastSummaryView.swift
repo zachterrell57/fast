@@ -75,24 +75,9 @@ struct FastSummaryView: View {
     }
 
     var body: some View {
-        VStack(spacing: 24) {
-            Spacer()
-
+        VStack(spacing: 0) {
             // Circular progress ring with completion
-            ZStack {
-                // Background circle
-                Circle()
-                    .stroke(Color(.systemGray5), lineWidth: 8)
-
-                // Progress circle (filled based on completion)
-                Circle()
-                    .trim(from: 0, to: progress)
-                    .stroke(
-                        Color.primary,
-                        style: StrokeStyle(lineWidth: 8, lineCap: .round)
-                    )
-                    .rotationEffect(.degrees(-90))
-
+            TimerRing(progress: progress) {
                 // Center content
                 VStack(spacing: 4) {
                     // Checkmark or percentage
@@ -113,9 +98,9 @@ struct FastSummaryView: View {
                         .foregroundColor(.primary)
                 }
             }
-            .frame(width: 220, height: 220)
+            .frame(maxHeight: .infinity)
 
-            // Time details
+            // Bottom content - fixed height for consistent layout
             VStack(spacing: 8) {
                 HStack(spacing: 24) {
                     VStack(spacing: 2) {
@@ -142,22 +127,21 @@ struct FastSummaryView: View {
                 Text("Goal: \(formattedTargetDuration)")
                     .font(.caption)
                     .foregroundColor(.secondary)
-            }
 
-            Spacer()
-
-            // Start New Fast button (only for today)
-            if isToday, let onStartNewFast = onStartNewFast {
-                Button {
-                    onStartNewFast()
-                } label: {
-                    Label("Start New Fast", systemImage: "play.fill")
-                        .font(.headline)
-                        .frame(minWidth: 120)
+                // Start New Fast button (only for today)
+                if isToday, let onStartNewFast = onStartNewFast {
+                    Button {
+                        onStartNewFast()
+                    } label: {
+                        Label("Start New Fast", systemImage: "play.fill")
+                            .font(.headline)
+                            .frame(minWidth: 120)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .controlSize(.large)
                 }
-                .buttonStyle(.borderedProminent)
-                .controlSize(.large)
             }
+            .frame(height: 120)
         }
         .padding(.bottom, 20)
     }

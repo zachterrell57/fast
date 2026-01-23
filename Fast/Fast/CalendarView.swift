@@ -262,6 +262,7 @@ struct DayCell: View {
     var isSelected: Bool = false
     var onTap: (() -> Void)? = nil
 
+    @Environment(\.colorScheme) private var colorScheme
     private let calendar = Calendar.current
 
     var body: some View {
@@ -287,7 +288,7 @@ struct DayCell: View {
 
                 Text("\(calendar.component(.day, from: date))")
                     .font(.subheadline)
-                    .foregroundStyle(isFasted ? .white : .primary)
+                    .foregroundStyle(isFasted ? (colorScheme == .dark ? .black : .white) : .primary)
             }
         }
         .buttonStyle(.plain)

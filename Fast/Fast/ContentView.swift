@@ -241,69 +241,55 @@ struct ContentView: View {
 
     @ViewBuilder
     private var timerView: some View {
-        VStack(spacing: 24) {
-            Spacer()
-
-            // Countdown display with circular progress
-            ZStack {
-                // Background circle
-                Circle()
-                    .stroke(Color(.systemGray5), lineWidth: 8)
-
-                // Progress circle
-                Circle()
-                    .trim(from: 0, to: progress)
-                    .stroke(Color.primary, style: StrokeStyle(lineWidth: 8, lineCap: .round))
-                    .rotationEffect(.degrees(-90))
-
+        VStack(spacing: 0) {
+            // Ring container - centers the ring in available space
+            TimerRing(progress: progress) {
                 // Draggable handle (only when not active)
                 if activeSession == nil {
                     Circle()
                         .fill(Color.primary)
                         .frame(width: 24, height: 24)
                         .shadow(radius: 2)
-                        .offset(y: -110)
+                        .offset(y: -130)
                         .rotationEffect(.degrees(handleAngle))
                 }
 
-                // Timer text and time info
-                VStack(spacing: 8) {
-                    Text(formattedTime)
-                        .font(.system(size: 48, weight: .light, design: .rounded))
-                        .monospacedDigit()
+                // Timer text - always centered
+                Text(formattedTime)
+                    .font(.system(size: 48, weight: .light, design: .rounded))
+                    .monospacedDigit()
 
-                    // Start and end times (when fasting or selecting duration)
-                    if activeSession != nil || selectedSeconds > 0 {
-                        HStack(spacing: 12) {
-                            VStack(spacing: 2) {
-                                Text(activeSession != nil ? "Started" : "Starts")
-                                    .font(.caption2)
-                                    .foregroundColor(.secondary)
-                                Text(startTimeFormatted)
-                                    .font(.caption.weight(.medium))
-                            }
-
-                            Image(systemName: "arrow.right")
+                // Start and end times - positioned below timer
+                if activeSession != nil || selectedSeconds > 0 {
+                    HStack(spacing: 12) {
+                        VStack(spacing: 2) {
+                            Text(activeSession != nil ? "Started" : "Starts")
                                 .font(.caption2)
                                 .foregroundColor(.secondary)
+                            Text(startTimeFormatted)
+                                .font(.caption.weight(.medium))
+                        }
 
-                            VStack(spacing: 2) {
-                                Text("Ends")
-                                    .font(.caption2)
-                                    .foregroundColor(.secondary)
-                                Text(endTimeFormatted)
-                                    .font(.caption.weight(.medium))
-                            }
+                        Image(systemName: "arrow.right")
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+
+                        VStack(spacing: 2) {
+                            Text("Ends")
+                                .font(.caption2)
+                                .foregroundColor(.secondary)
+                            Text(endTimeFormatted)
+                                .font(.caption.weight(.medium))
                         }
                     }
+                    .offset(y: 40)
                 }
             }
-            .frame(width: 220, height: 220)
             .gesture(
                 DragGesture()
                     .onChanged { value in
                         guard activeSession == nil else { return }
-                        let center = CGPoint(x: 110, y: 110)
+                        let center = CGPoint(x: 130, y: 130)
                         let location = value.location
                         let dx = location.x - center.x
                         let dy = center.y - location.y
@@ -318,53 +304,56 @@ struct ContentView: View {
                         selectedPreset = nil
                     }
             )
+            .frame(maxHeight: .infinity)
 
-            // Preset pills (hidden when active session)
-            HStack(spacing: 12) {
-                ForEach(fastingPresets, id: \.seconds) { preset in
-                    Button {
-                        if selectedPreset == preset.seconds {
-                            selectedPreset = nil
-                            selectedSeconds = 0
-                        } else {
-                            selectedSeconds = preset.seconds
-                            selectedPreset = preset.seconds
+            // Bottom content - fixed height for consistent layout
+            VStack(spacing: 24) {
+                // Preset pills (hidden when active session)
+                HStack(spacing: 12) {
+                    ForEach(fastingPresets, id: \.seconds) { preset in
+                        Button {
+                            if selectedPreset == preset.seconds {
+                                selectedPreset = nil
+                                selectedSeconds = 0
+                            } else {
+                                selectedSeconds = preset.seconds
+                                selectedPreset = preset.seconds
+                            }
+                        } label: {
+                            Text(preset.label)
+                                .font(.subheadline.weight(.medium))
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 8)
+                                .background(
+                                    Capsule()
+                                        .fill(selectedPreset == preset.seconds ? Color.primary : Color(.systemGray5))
+                                )
+                                .foregroundColor(selectedPreset == preset.seconds ? .white : .primary)
                         }
-                    } label: {
-                        Text(preset.label)
-                            .font(.subheadline.weight(.medium))
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 8)
-                            .background(
-                                Capsule()
-                                    .fill(selectedPreset == preset.seconds ? Color.primary : Color(.systemGray5))
-                            )
-                            .foregroundColor(selectedPreset == preset.seconds ? .white : .primary)
+                        .buttonStyle(.plain)
                     }
-                    .buttonStyle(.plain)
                 }
-            }
-            .opacity(activeSession == nil ? 1 : 0)
+                .opacity(activeSession == nil ? 1 : 0)
 
-            Spacer()
-
-            Button {
-                if activeSession != nil {
-                    stopFast()
-                } else {
-                    startFast()
+                Button {
+                    if activeSession != nil {
+                        stopFast()
+                    } else {
+                        startFast()
+                    }
+                } label: {
+                    Label(
+                        activeSession != nil ? "Stop" : "Start",
+                        systemImage: activeSession != nil ? "stop.fill" : "play.fill"
+                    )
+                    .font(.headline)
+                    .frame(minWidth: 120)
                 }
-            } label: {
-                Label(
-                    activeSession != nil ? "Stop" : "Start",
-                    systemImage: activeSession != nil ? "stop.fill" : "play.fill"
-                )
-                .font(.headline)
-                .frame(minWidth: 120)
+                .buttonStyle(.borderedProminent)
+                .controlSize(.large)
+                .disabled(activeSession == nil && selectedSeconds == 0)
             }
-            .buttonStyle(.borderedProminent)
-            .controlSize(.large)
-            .disabled(activeSession == nil && selectedSeconds == 0)
+            .frame(height: 120)
         }
         .padding(.bottom, 20)
         .animation(nil, value: activeSession?.id)

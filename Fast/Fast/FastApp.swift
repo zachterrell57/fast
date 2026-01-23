@@ -54,19 +54,19 @@ struct FastApp: App {
         for days in daysAgo {
             guard let startDate = calendar.date(byAdding: .day, value: -days, to: today) else { continue }
 
-            // Set start time to around 8 PM
+            // Vary start time between 6 PM and 10 PM with random minutes
             var startComponents = calendar.dateComponents([.year, .month, .day], from: startDate)
-            startComponents.hour = 20
-            startComponents.minute = 0
+            startComponents.hour = Int.random(in: 18...22)
+            startComponents.minute = [0, 15, 30, 45].randomElement()!
             guard let startAt = calendar.date(from: startComponents) else { continue }
 
             // Target duration from common fasting goals
-            let targetHours = [14, 16, 18, 20].randomElement()!
+            let targetHours = [12, 14, 16, 18].randomElement()!
             let targetDuration = TimeInterval(targetHours * 3600)
 
-            // Actual fast duration (sometimes slightly over/under target)
-            let actualHours = targetHours + Int.random(in: -1...2)
-            guard let endAt = calendar.date(byAdding: .hour, value: actualHours, to: startAt) else { continue }
+            // Actual fast duration (sometimes slightly over/under target, with minute variation)
+            let actualMinutes = (targetHours * 60) + Int.random(in: -45...90)
+            guard let endAt = calendar.date(byAdding: .minute, value: actualMinutes, to: startAt) else { continue }
 
             let session = FastSession(startAt: startAt, targetDuration: targetDuration)
             session.endAt = endAt
@@ -80,6 +80,7 @@ struct FastApp: App {
         do {
             try context.delete(model: FastSession.self)
             try context.save()
+            UserDefaults.standard.set(false, forKey: "hasInsertedMockData")
         } catch {
             print("Failed to clear mock data: \(error)")
         }

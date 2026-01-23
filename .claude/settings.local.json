@@ -38,7 +38,9 @@
       "Bash(xargs:*)",
       "Bash(convert:*)",
       "Bash(sips:*)",
-      "Bash(magick:*)"
+      "Bash(magick:*)",
+      "mcp__xcodebuildmcp__session-show-defaults",
+      "mcp__xcodebuildmcp__set_sim_appearance"
     ]
   }
 }
