@@ -350,11 +350,35 @@ struct ContentView: View {
         return formatter.string(from: endTime)
     }
 
+    /// Dial rotation gesture for selecting fasting duration
+    private var dialGesture: AnyGesture<DragGesture.Value> {
+        AnyGesture(
+            DragGesture(minimumDistance: 5)
+                .onChanged { value in
+                    guard activeSession == nil else { return }
+                    let center = CGPoint(x: 130, y: 130)
+                    let location = value.location
+                    let dx = location.x - center.x
+                    let dy = center.y - location.y
+                    var angle = atan2(dx, dy) * 180 / .pi
+                    if angle < 0 { angle += 360 }
+                    let hours = Int(round(angle / 360 * 24)) % 24
+                    if hours != lastDialHour {
+                        dialFeedback.impactOccurred()
+                        lastDialHour = hours
+                    }
+                    selectedSeconds = hours * 3600
+                    selectedPreset = nil
+                }
+        )
+    }
+
     @ViewBuilder
     private var timerView: some View {
         VStack(spacing: 0) {
             // Ring container - centers the ring in available space
-            TimerRing(progress: progress) {
+            // Pass dial gesture only when no active session, so it's only captured on ring area
+            TimerRing(progress: progress, dialGesture: activeSession == nil ? dialGesture : nil) {
                 // Draggable handle (only when not active)
                 if activeSession == nil {
                     Circle()
@@ -396,25 +420,6 @@ struct ContentView: View {
                     .offset(y: 40)
                 }
             }
-            .highPriorityGesture(
-                DragGesture(minimumDistance: 5)
-                    .onChanged { value in
-                        guard activeSession == nil else { return }
-                        let center = CGPoint(x: 130, y: 130)
-                        let location = value.location
-                        let dx = location.x - center.x
-                        let dy = center.y - location.y
-                        var angle = atan2(dx, dy) * 180 / .pi
-                        if angle < 0 { angle += 360 }
-                        let hours = Int(round(angle / 360 * 24)) % 24
-                        if hours != lastDialHour {
-                            dialFeedback.impactOccurred()
-                            lastDialHour = hours
-                        }
-                        selectedSeconds = hours * 3600
-                        selectedPreset = nil
-                    }
-            )
             .frame(maxHeight: .infinity)
 
             // Bottom content - fixed height for consistent layout
