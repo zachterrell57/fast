@@ -20,7 +20,7 @@ struct CalendarSection: View {
     }
 
     var body: some View {
-        VStack(spacing: 4) {
+        VStack(spacing: 8) {
             ZStack {
                 if isExpanded {
                     CalendarView(fastedDates: fastedDates, selectedDate: $selectedDate, onDateSelected: onDateSelected)
@@ -50,7 +50,7 @@ struct CalendarSection: View {
                     .rotationEffect(.degrees(isExpanded ? 180 : 0))
                     .animation(contentAnimation, value: isExpanded)
             }
-            .padding(.top, 2)
+            .padding(.vertical, 8)
         }
     }
 }
