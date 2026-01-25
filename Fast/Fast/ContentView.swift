@@ -230,6 +230,7 @@ struct ContentView: View {
             }
             ToolbarItem(placement: .topBarTrailing) {
                 StatsView(completedSessions: completedSessions)
+                    .padding(.top, 8)
             }
         }
         }
