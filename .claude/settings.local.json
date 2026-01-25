@@ -40,7 +40,11 @@
       "Bash(sips:*)",
       "Bash(magick:*)",
       "mcp__xcodebuildmcp__session-show-defaults",
-      "mcp__xcodebuildmcp__set_sim_appearance"
+      "mcp__xcodebuildmcp__set_sim_appearance",
+      "Skill(feature)",
+      "Bash(find:*)",
+      "mcp__xcodebuildmcp__gesture",
+      "mcp__xcodebuildmcp__swipe"
     ]
   }
 }
