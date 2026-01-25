@@ -20,7 +20,7 @@ struct CalendarSection: View {
     }
 
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 2) {
             ZStack {
                 if isExpanded {
                     CalendarView(fastedDates: fastedDates, selectedDate: $selectedDate, onDateSelected: onDateSelected)
@@ -45,12 +45,12 @@ struct CalendarSection: View {
                 }
             } label: {
                 Image(systemName: "chevron.down")
-                    .font(.caption.weight(.semibold))
-                    .foregroundStyle(.secondary)
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundColor(.white)
                     .rotationEffect(.degrees(isExpanded ? 180 : 0))
                     .animation(contentAnimation, value: isExpanded)
             }
-            .padding(.vertical, 8)
+            .padding(.bottom, isExpanded ? 16 : 4)
         }
     }
 }
@@ -107,7 +107,7 @@ struct CompactWeekView: View {
             }
         }
         .padding(.horizontal, 4)
-        .padding(.vertical, 12)
+        .padding(.vertical, 8)
     }
 
     private func dayLetter(for date: Date) -> String {
@@ -199,7 +199,7 @@ struct CalendarView: View {
             }
         }
         .padding(.horizontal, 4)
-        .padding(.vertical)
+        .padding(.bottom)
     }
 
     private var monthYearString: String {

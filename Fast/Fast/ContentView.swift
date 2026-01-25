@@ -167,7 +167,7 @@ struct ContentView: View {
                         showingNewFastAfterSummary = false
                     }
                 )
-                .padding(.top, 12)
+                .padding(.top, 16)
 
                 // Main content area - native paging with TabView
                 TabView(selection: $currentPageIndex) {
@@ -212,6 +212,7 @@ struct ContentView: View {
             ToolbarItem(placement: .topBarLeading) {
                 Text("Fast")
                     .font(.largeTitle.bold())
+                    .padding(.top, 8)
                     #if DEBUG
                     .onTapGesture {
                         titleTapCount += 1
