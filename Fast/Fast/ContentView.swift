@@ -70,11 +70,14 @@ struct ContentView: View {
         return sessionFor(date: date)
     }
 
-    /// Get session for any arbitrary date
+    /// Get session for any arbitrary date (matches by end date since fasts are marked on the day they end)
     private func sessionFor(date: Date) -> FastSession? {
         return completedSessions
-            .filter { calendar.isDate($0.startAt, inSameDayAs: date) }
-            .sorted { $0.startAt > $1.startAt }
+            .filter { session in
+                guard let endAt = session.endAt else { return false }
+                return calendar.isDate(endAt, inSameDayAs: date)
+            }
+            .sorted { ($0.endAt ?? .distantPast) > ($1.endAt ?? .distantPast) }
             .first
     }
 
@@ -136,7 +139,8 @@ struct ContentView: View {
     private var fastedDates: Set<DateComponents> {
         var dates = Set<DateComponents>()
         for session in completedSessions {
-            let components = calendar.dateComponents([.year, .month, .day], from: session.startAt)
+            // Use endAt to mark the day the fast ended (overnight fasts end the next morning)
+            let components = calendar.dateComponents([.year, .month, .day], from: session.endAt!)
             dates.insert(components)
         }
         return dates
