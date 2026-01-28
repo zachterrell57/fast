@@ -57,8 +57,6 @@ struct TimeEditSheet: View {
                 )
                 .datePickerStyle(.wheel)
                 .labelsHidden()
-
-                Spacer()
             }
             .padding()
             .navigationTitle(title)
@@ -77,7 +75,7 @@ struct TimeEditSheet: View {
                 }
             }
         }
-        .presentationDetents([.medium])
+        .presentationDetents([.height(300)])
     }
 
     private var dateRange: ClosedRange<Date> {
