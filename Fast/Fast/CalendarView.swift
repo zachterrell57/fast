@@ -46,7 +46,7 @@ struct CalendarSection: View {
             } label: {
                 Image(systemName: "chevron.down")
                     .font(.system(size: 14, weight: .semibold))
-                    .foregroundColor(.white)
+                    .foregroundStyle(.primary)
                     .rotationEffect(.degrees(isExpanded ? 180 : 0))
                     .animation(contentAnimation, value: isExpanded)
             }
