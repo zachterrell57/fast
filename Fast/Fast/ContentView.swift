@@ -36,7 +36,9 @@ struct ContentView: View {
     }
 
     @State private var editingStartTime = false
+    @State private var editingCustomStartTime = false
     @State private var editStartDate = Date()
+    @State private var customStartDate: Date? = nil
     @State private var selectedSeconds: Int = 0
     @State private var selectedPreset: Int? = nil
     @State private var lastDialHour: Int = 0
@@ -276,8 +278,8 @@ struct ContentView: View {
         if let session = activeSession {
             return formatter.string(from: session.startAt)
         }
-        // Preview mode: show current time
-        return formatter.string(from: Date())
+        // Preview mode: show custom start time or current time
+        return formatter.string(from: customStartDate ?? Date())
     }
 
     private var endTimeFormatted: String {
@@ -287,8 +289,9 @@ struct ContentView: View {
             let endTime = session.startAt.addingTimeInterval(session.targetDuration)
             return formatter.string(from: endTime)
         }
-        // Preview mode: show current time + selected duration
-        let endTime = Date().addingTimeInterval(TimeInterval(selectedSeconds))
+        // Preview mode: show projected end based on start time + selected duration
+        let startTime = customStartDate ?? Date()
+        let endTime = startTime.addingTimeInterval(TimeInterval(selectedSeconds))
         return formatter.string(from: endTime)
     }
 
@@ -345,12 +348,15 @@ struct ContentView: View {
                                 .foregroundColor(.secondary)
                             Text(startTimeFormatted)
                                 .font(.caption.weight(.medium))
-                                .underline(activeSession != nil, color: .secondary.opacity(0.5))
+                                .underline(color: .secondary.opacity(0.5))
                         }
                         .onTapGesture {
                             if let session = activeSession {
                                 editStartDate = session.startAt
                                 editingStartTime = true
+                            } else if selectedSeconds > 0 {
+                                editStartDate = customStartDate ?? Date()
+                                editingCustomStartTime = true
                             }
                         }
 
@@ -441,6 +447,16 @@ struct ContentView: View {
                 }
             )
         }
+        .sheet(isPresented: $editingCustomStartTime) {
+            TimeEditSheet(
+                editType: .start,
+                date: $editStartDate,
+                maxDate: Date(),
+                onSave: { newDate in
+                    customStartDate = newDate
+                }
+            )
+        }
     }
 
     /// Renders content for a specific date (used for paging)
@@ -507,12 +523,16 @@ struct ContentView: View {
 
     private func startFast() {
         let targetDuration = TimeInterval(selectedSeconds)
-        let session = FastSession(targetDuration: targetDuration)
+        let startDate = customStartDate ?? Date()
+        let session = FastSession(startAt: startDate, targetDuration: targetDuration)
         modelContext.insert(session)
         timerEngine.start(from: session.startAt, target: targetDuration)
 
         let endDate = session.startAt.addingTimeInterval(targetDuration)
-        NotificationManager.shared.scheduleFastComplete(at: endDate)
+        if endDate > Date() {
+            NotificationManager.shared.scheduleFastComplete(at: endDate)
+        }
+        customStartDate = nil
     }
 
     private func stopFast() {
