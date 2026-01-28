@@ -12,6 +12,10 @@ struct FastSummaryView: View {
     let isToday: Bool
     let onStartNewFast: (() -> Void)?
 
+    @State private var editingStartTime = false
+    @State private var editingEndTime = false
+    @State private var editDate = Date()
+
     private let calendar = Calendar.current
 
     private var completionPercentage: Double {
@@ -109,6 +113,11 @@ struct FastSummaryView: View {
                             .foregroundColor(.secondary)
                         Text(startTimeFormatted)
                             .font(.subheadline.weight(.medium))
+                            .underline(color: .secondary.opacity(0.5))
+                    }
+                    .onTapGesture {
+                        editDate = session.startAt
+                        editingStartTime = true
                     }
 
                     Image(systemName: "arrow.right")
@@ -120,6 +129,13 @@ struct FastSummaryView: View {
                             .foregroundColor(.secondary)
                         Text(endTimeFormatted)
                             .font(.subheadline.weight(.medium))
+                            .underline(color: .secondary.opacity(0.5))
+                    }
+                    .onTapGesture {
+                        if let endAt = session.endAt {
+                            editDate = endAt
+                            editingEndTime = true
+                        }
                     }
                 }
 
@@ -144,6 +160,27 @@ struct FastSummaryView: View {
             .frame(height: 120)
         }
         .padding(.bottom, 20)
+        .sheet(isPresented: $editingStartTime) {
+            TimeEditSheet(
+                editType: .start,
+                date: $editDate,
+                maxDate: session.endAt,
+                onSave: { newDate in
+                    session.startAt = newDate
+                }
+            )
+        }
+        .sheet(isPresented: $editingEndTime) {
+            TimeEditSheet(
+                editType: .end,
+                date: $editDate,
+                minDate: session.startAt,
+                maxDate: Date(),
+                onSave: { newDate in
+                    session.endAt = newDate
+                }
+            )
+        }
     }
 }
 

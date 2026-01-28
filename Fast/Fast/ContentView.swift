@@ -35,6 +35,8 @@ struct ContentView: View {
         return presets
     }
 
+    @State private var editingStartTime = false
+    @State private var editStartDate = Date()
     @State private var selectedSeconds: Int = 0
     @State private var selectedPreset: Int? = nil
     @State private var lastDialHour: Int = 0
@@ -130,7 +132,7 @@ struct ContentView: View {
 
     /// The session to display in summary view
     private var summarySession: FastSession? {
-        if let date = selectedDate {
+        if selectedDate != nil {
             return sessionForSelectedDate
         }
         return todayCompletedSession
@@ -343,6 +345,13 @@ struct ContentView: View {
                                 .foregroundColor(.secondary)
                             Text(startTimeFormatted)
                                 .font(.caption.weight(.medium))
+                                .underline(activeSession != nil, color: .secondary.opacity(0.5))
+                        }
+                        .onTapGesture {
+                            if let session = activeSession {
+                                editStartDate = session.startAt
+                                editingStartTime = true
+                            }
                         }
 
                         Image(systemName: "arrow.right")
@@ -384,7 +393,7 @@ struct ContentView: View {
                                     Capsule()
                                         .fill(selectedPreset == preset.seconds ? Color.primary : Color(.systemGray5))
                                 )
-                                .foregroundColor(selectedPreset == preset.seconds ? .white : .primary)
+                                .foregroundColor(selectedPreset == preset.seconds ? Color(.systemBackground) : .primary)
                         }
                         .buttonStyle(.plain)
                     }
@@ -413,6 +422,25 @@ struct ContentView: View {
         }
         .padding(.bottom, 20)
         .animation(nil, value: activeSession?.id)
+        .sheet(isPresented: $editingStartTime) {
+            TimeEditSheet(
+                editType: .start,
+                date: $editStartDate,
+                maxDate: Date(),
+                onSave: { newDate in
+                    guard let session = activeSession else { return }
+                    session.startAt = newDate
+                    try? modelContext.save()
+                    // Restart timer with updated start time
+                    timerEngine.start(from: newDate, target: session.targetDuration)
+                    // Reschedule notification
+                    let endDate = newDate.addingTimeInterval(session.targetDuration)
+                    if endDate > Date() {
+                        NotificationManager.shared.scheduleFastComplete(at: endDate)
+                    }
+                }
+            )
+        }
     }
 
     /// Renders content for a specific date (used for paging)
