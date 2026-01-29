@@ -66,12 +66,14 @@ struct TimeEditSheet: View {
                     Button("Cancel") {
                         dismiss()
                     }
+                    .foregroundColor(.blue)
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
                         onSave(selectedDate)
                         dismiss()
                     }
+                    .foregroundColor(.blue)
                 }
             }
         }
