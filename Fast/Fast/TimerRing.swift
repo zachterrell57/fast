@@ -23,11 +23,15 @@ struct RingShape: Shape {
 
 struct TimerRing<Content: View>: View {
     let progress: CGFloat
+    let isPulsing: Bool
     let dialGesture: AnyGesture<DragGesture.Value>?
     @ViewBuilder let content: () -> Content
 
-    init(progress: CGFloat, dialGesture: AnyGesture<DragGesture.Value>? = nil, @ViewBuilder content: @escaping () -> Content) {
+    @State private var pulseOpacity: Double = 0.3
+
+    init(progress: CGFloat, isPulsing: Bool = false, dialGesture: AnyGesture<DragGesture.Value>? = nil, @ViewBuilder content: @escaping () -> Content) {
         self.progress = progress
+        self.isPulsing = isPulsing
         self.dialGesture = dialGesture
         self.content = content
     }
@@ -38,14 +42,27 @@ struct TimerRing<Content: View>: View {
             Circle()
                 .stroke(Color(.systemGray5), lineWidth: 8)
 
-            // Progress circle
-            Circle()
-                .trim(from: 0, to: progress)
-                .stroke(
-                    Color.primary,
-                    style: StrokeStyle(lineWidth: 8, lineCap: .round)
-                )
-                .rotationEffect(.degrees(-90))
+            // Progress circle (or pulsing ring for open-ended fasts)
+            if isPulsing {
+                Circle()
+                    .stroke(
+                        Color.primary.opacity(pulseOpacity),
+                        style: StrokeStyle(lineWidth: 8, lineCap: .round)
+                    )
+                    .onAppear {
+                        withAnimation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
+                            pulseOpacity = 0.8
+                        }
+                    }
+            } else {
+                Circle()
+                    .trim(from: 0, to: progress)
+                    .stroke(
+                        Color.primary,
+                        style: StrokeStyle(lineWidth: 8, lineCap: .round)
+                    )
+                    .rotationEffect(.degrees(-90))
+            }
 
             content()
 

@@ -10,21 +10,19 @@ import Combine
 
 @MainActor
 class TimerEngine: ObservableObject {
-    @Published var remainingSeconds: TimeInterval = 0
+    @Published var elapsedSeconds: TimeInterval = 0
 
     private var timer: Timer?
     private var startAt: Date?
-    private var targetDuration: TimeInterval = 0
 
-    func start(from date: Date, target: TimeInterval) {
+    func start(from date: Date) {
         startAt = date
-        targetDuration = target
-        updateRemainingTime()
+        updateElapsedTime()
 
         timer?.invalidate()
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
             Task { @MainActor in
-                self?.updateRemainingTime()
+                self?.updateElapsedTime()
             }
         }
     }
@@ -33,17 +31,15 @@ class TimerEngine: ObservableObject {
         timer?.invalidate()
         timer = nil
         startAt = nil
-        targetDuration = 0
-        remainingSeconds = 0
+        elapsedSeconds = 0
     }
 
     func refresh() {
-        updateRemainingTime()
+        updateElapsedTime()
     }
 
-    private func updateRemainingTime() {
+    private func updateElapsedTime() {
         guard let startAt else { return }
-        let elapsed = Date().timeIntervalSince(startAt)
-        remainingSeconds = max(0, targetDuration - elapsed)
+        elapsedSeconds = Date().timeIntervalSince(startAt)
     }
 }

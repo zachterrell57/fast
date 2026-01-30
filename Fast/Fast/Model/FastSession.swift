@@ -13,25 +13,31 @@ class FastSession {
     var id: UUID
     var startAt: Date
     var endAt: Date?
-    var targetDuration: TimeInterval = 16 * 3600
+    var targetDuration: TimeInterval?
 
     var elapsedDuration: TimeInterval {
         (endAt ?? Date()).timeIntervalSince(startAt)
     }
 
-    var remainingDuration: TimeInterval {
-        max(0, targetDuration - elapsedDuration)
+    var hasGoal: Bool {
+        targetDuration != nil
+    }
+
+    var remainingDuration: TimeInterval? {
+        guard let target = targetDuration else { return nil }
+        return max(0, target - elapsedDuration)
     }
 
     var isActive: Bool {
         endAt == nil
     }
 
-    var isComplete: Bool {
-        remainingDuration == 0
+    var goalReached: Bool {
+        guard let target = targetDuration else { return false }
+        return elapsedDuration >= target
     }
 
-    init(startAt: Date = Date(), targetDuration: TimeInterval = 16 * 3600) {
+    init(startAt: Date = Date(), targetDuration: TimeInterval? = nil) {
         self.id = UUID()
         self.startAt = startAt
         self.endAt = nil
