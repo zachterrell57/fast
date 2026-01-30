@@ -18,14 +18,16 @@ struct FastSummaryView: View {
 
     private let calendar = Calendar.current
 
-    private var completionPercentage: Double {
-        guard session.targetDuration > 0 else { return 1.0 }
-        return session.elapsedDuration / session.targetDuration
+    private var completionPercentage: Double? {
+        guard let target = session.targetDuration, target > 0 else { return nil }
+        return session.elapsedDuration / target
     }
 
     private var progress: CGFloat {
-        // Cap at 1.0 for the ring, but show actual percentage in text
-        min(1.0, CGFloat(completionPercentage))
+        // Cap at 1.0 for the ring
+        // For no-goal sessions, show full ring
+        guard let percentage = completionPercentage else { return 1.0 }
+        return min(1.0, CGFloat(percentage))
     }
 
     private var formattedDuration: String {
@@ -42,8 +44,9 @@ struct FastSummaryView: View {
         }
     }
 
-    private var formattedTargetDuration: String {
-        let totalSeconds = Int(session.targetDuration)
+    private var formattedTargetDuration: String? {
+        guard let target = session.targetDuration else { return nil }
+        let totalSeconds = Int(target)
         let hours = totalSeconds / 3600
         let minutes = (totalSeconds % 3600) / 60
 
@@ -69,13 +72,17 @@ struct FastSummaryView: View {
         return formatter.string(from: endAt)
     }
 
-    private var percentageText: String {
-        let percentage = Int(completionPercentage * 100)
-        return "\(percentage)%"
+    private var percentageText: String? {
+        guard let percentage = completionPercentage else { return nil }
+        return "\(Int(percentage * 100))%"
     }
 
     private var goalReached: Bool {
-        completionPercentage >= 1.0
+        guard let percentage = completionPercentage else {
+            // No goal = always show checkmark (user completed by choice)
+            return true
+        }
+        return percentage >= 1.0
     }
 
     var body: some View {
@@ -84,7 +91,7 @@ struct FastSummaryView: View {
             TimerRing(progress: progress) {
                 // Center content
                 VStack(spacing: 4) {
-                    // Checkmark or percentage
+                    // Checkmark for completed fasts
                     if goalReached {
                         Image(systemName: "checkmark")
                             .font(.system(size: 24, weight: .bold))
@@ -96,10 +103,12 @@ struct FastSummaryView: View {
                         .font(.system(size: 36, weight: .light, design: .rounded))
                         .monospacedDigit()
 
-                    // Percentage
-                    Text(percentageText)
-                        .font(.subheadline)
-                        .foregroundColor(.primary)
+                    // Percentage (only if goal was set)
+                    if let percentage = percentageText {
+                        Text(percentage)
+                            .font(.subheadline)
+                            .foregroundColor(.primary)
+                    }
                 }
             }
             .frame(maxHeight: .infinity)
@@ -139,10 +148,12 @@ struct FastSummaryView: View {
                     }
                 }
 
-                // Goal info
-                Text("Goal: \(formattedTargetDuration)")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+                // Goal info (only if goal was set)
+                if let targetDuration = formattedTargetDuration {
+                    Text("Goal: \(targetDuration)")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
 
                 // Start New Fast button (only for today)
                 if isToday, let onStartNewFast = onStartNewFast {
@@ -204,4 +215,16 @@ struct FastSummaryView: View {
     session.endAt = Calendar.current.date(byAdding: .hour, value: -4, to: Date())
 
     return FastSummaryView(session: session, isToday: false, onStartNewFast: nil)
+}
+
+#Preview("Open Ended Fast") {
+    let session = FastSession(
+        startAt: Calendar.current.date(byAdding: .hour, value: -8, to: Date())!,
+        targetDuration: nil
+    )
+    session.endAt = Calendar.current.date(byAdding: .hour, value: -1, to: Date())
+
+    return FastSummaryView(session: session, isToday: true) {
+        print("Start new fast")
+    }
 }

@@ -203,19 +203,6 @@ struct ContentView: View {
                 timerEngine.refresh()
             }
         }
-        .onChange(of: timerEngine.remainingSeconds) { _, newValue in
-            if newValue == 0, let session = activeSession {
-                session.endAt = session.startAt.addingTimeInterval(session.targetDuration)
-                try? modelContext.save()
-                timerEngine.stop()
-                selectedSeconds = 0
-                selectedPreset = nil
-                // Reset so summary view appears for the newly completed fast
-                showingNewFastAfterSummary = false
-                selectedDate = nil  // Return to today to show completion summary
-                currentPageIndex = 0  // Sync TabView to today
-            }
-        }
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
                 Text("Fast")
@@ -246,12 +233,22 @@ struct ContentView: View {
 
     private var progress: CGFloat {
         if let session = activeSession {
-            let total = session.targetDuration
-            let remaining = timerEngine.remainingSeconds
-            return total > 0 ? CGFloat(remaining / total) : 1.0
+            guard let total = session.targetDuration, total > 0 else {
+                // No goal set - return nil-like value, handled by pulsing animation
+                return 0
+            }
+            let elapsed = timerEngine.elapsedSeconds
+            // Cap at 1.0 for ring display (elapsed / goal, grows from 0 to 1)
+            return min(1.0, CGFloat(elapsed / total))
         }
         // When selecting, show fill based on selection
         return CGFloat(selectedSeconds) / CGFloat(maxDuration)
+    }
+
+    /// Whether the active session has no goal (for pulsing animation)
+    private var isOpenEndedFast: Bool {
+        guard let session = activeSession else { return false }
+        return session.targetDuration == nil
     }
 
     private var handleAngle: Double {
@@ -262,7 +259,7 @@ struct ContentView: View {
     private var formattedTime: String {
         let totalSeconds: Int
         if activeSession != nil {
-            totalSeconds = Int(timerEngine.remainingSeconds)
+            totalSeconds = Int(timerEngine.elapsedSeconds)
         } else {
             totalSeconds = selectedSeconds
         }
@@ -282,17 +279,27 @@ struct ContentView: View {
         return formatter.string(from: customStartDate ?? Date())
     }
 
-    private var endTimeFormatted: String {
+    private var endTimeFormatted: String? {
         let formatter = DateFormatter()
         formatter.dateFormat = "h:mm a"
         if let session = activeSession {
-            let endTime = session.startAt.addingTimeInterval(session.targetDuration)
+            guard let targetDuration = session.targetDuration else { return nil }
+            let endTime = session.startAt.addingTimeInterval(targetDuration)
             return formatter.string(from: endTime)
         }
         // Preview mode: show projected end based on start time + selected duration
+        guard selectedSeconds > 0 else { return nil }
         let startTime = customStartDate ?? Date()
         let endTime = startTime.addingTimeInterval(TimeInterval(selectedSeconds))
         return formatter.string(from: endTime)
+    }
+
+    /// Whether to show the end time (only when a goal is set)
+    private var hasGoalToShow: Bool {
+        if let session = activeSession {
+            return session.targetDuration != nil
+        }
+        return selectedSeconds > 0
     }
 
     /// Dial rotation gesture for selecting fasting duration
@@ -323,7 +330,7 @@ struct ContentView: View {
         VStack(spacing: 0) {
             // Ring container - centers the ring in available space
             // Pass dial gesture only when no active session, so it's only captured on ring area
-            TimerRing(progress: progress, dialGesture: activeSession == nil ? dialGesture : nil) {
+            TimerRing(progress: progress, isPulsing: isOpenEndedFast, dialGesture: activeSession == nil ? dialGesture : nil) {
                 // Draggable handle (only when not active)
                 if activeSession == nil {
                     Circle()
@@ -340,6 +347,7 @@ struct ContentView: View {
                     .monospacedDigit()
 
                 // Start and end times - positioned below timer
+                // Show for active sessions (with or without goal) or when goal is selected before starting
                 if activeSession != nil || selectedSeconds > 0 {
                     HStack(spacing: 12) {
                         VStack(spacing: 2) {
@@ -360,16 +368,19 @@ struct ContentView: View {
                             }
                         }
 
-                        Image(systemName: "arrow.right")
-                            .font(.caption2)
-                            .foregroundColor(.secondary)
-
-                        VStack(spacing: 2) {
-                            Text("Ends")
+                        // Only show end time section if a goal is set
+                        if hasGoalToShow, let endTime = endTimeFormatted {
+                            Image(systemName: "arrow.right")
                                 .font(.caption2)
                                 .foregroundColor(.secondary)
-                            Text(endTimeFormatted)
-                                .font(.caption.weight(.medium))
+
+                            VStack(spacing: 2) {
+                                Text("Ends")
+                                    .font(.caption2)
+                                    .foregroundColor(.secondary)
+                                Text(endTime)
+                                    .font(.caption.weight(.medium))
+                            }
                         }
                     }
                     .offset(y: 40)
@@ -422,7 +433,6 @@ struct ContentView: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .controlSize(.large)
-                .disabled(activeSession == nil && selectedSeconds == 0)
             }
             .frame(height: 120)
         }
@@ -438,11 +448,13 @@ struct ContentView: View {
                     session.startAt = newDate
                     try? modelContext.save()
                     // Restart timer with updated start time
-                    timerEngine.start(from: newDate, target: session.targetDuration)
-                    // Reschedule notification
-                    let endDate = newDate.addingTimeInterval(session.targetDuration)
-                    if endDate > Date() {
-                        NotificationManager.shared.scheduleFastComplete(at: endDate)
+                    timerEngine.start(from: newDate)
+                    // Reschedule notification if goal is set
+                    if let targetDuration = session.targetDuration {
+                        let endDate = newDate.addingTimeInterval(targetDuration)
+                        if endDate > Date() {
+                            NotificationManager.shared.scheduleFastComplete(at: endDate)
+                        }
                     }
                 }
             )
@@ -522,15 +534,18 @@ struct ContentView: View {
     }
 
     private func startFast() {
-        let targetDuration = TimeInterval(selectedSeconds)
+        let targetDuration: TimeInterval? = selectedSeconds > 0 ? TimeInterval(selectedSeconds) : nil
         let startDate = customStartDate ?? Date()
         let session = FastSession(startAt: startDate, targetDuration: targetDuration)
         modelContext.insert(session)
-        timerEngine.start(from: session.startAt, target: targetDuration)
+        timerEngine.start(from: session.startAt)
 
-        let endDate = session.startAt.addingTimeInterval(targetDuration)
-        if endDate > Date() {
-            NotificationManager.shared.scheduleFastComplete(at: endDate)
+        // Only schedule notification if a goal is set
+        if let duration = targetDuration {
+            let endDate = session.startAt.addingTimeInterval(duration)
+            if endDate > Date() {
+                NotificationManager.shared.scheduleFastComplete(at: endDate)
+            }
         }
         customStartDate = nil
     }
@@ -556,11 +571,14 @@ struct ContentView: View {
 
     private func restoreSession() {
         if let session = activeSession {
-            timerEngine.start(from: session.startAt, target: session.targetDuration)
+            timerEngine.start(from: session.startAt)
 
-            let endDate = session.startAt.addingTimeInterval(session.targetDuration)
-            if endDate > Date() {
-                NotificationManager.shared.scheduleFastComplete(at: endDate)
+            // Only schedule notification if a goal is set and not yet reached
+            if let targetDuration = session.targetDuration {
+                let endDate = session.startAt.addingTimeInterval(targetDuration)
+                if endDate > Date() {
+                    NotificationManager.shared.scheduleFastComplete(at: endDate)
+                }
             }
         }
     }
