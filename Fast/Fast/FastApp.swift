@@ -13,6 +13,11 @@ struct FastApp: App {
     let container: ModelContainer
 
     init() {
+        UserDefaults.standard.register(defaults: [
+            "reminderEnabled": true,
+            "reminderHour": 20,
+            "reminderMinute": 0
+        ])
         do {
             container = try ModelContainer(for: FastSession.self)
             #if DEBUG
@@ -30,6 +35,12 @@ struct FastApp: App {
             ContentView()
                 .onAppear {
                     NotificationManager.shared.requestPermission()
+                    if UserDefaults.standard.bool(forKey: "reminderEnabled") {
+                        NotificationManager.shared.scheduleEveningReminder(
+                            hour: UserDefaults.standard.integer(forKey: "reminderHour"),
+                            minute: UserDefaults.standard.integer(forKey: "reminderMinute")
+                        )
+                    }
                 }
         }
         .modelContainer(container)
