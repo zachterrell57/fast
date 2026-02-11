@@ -35,6 +35,10 @@ struct ContentView: View {
         return presets
     }
 
+    @AppStorage("reminderEnabled") private var reminderEnabled = true
+    @AppStorage("reminderHour") private var reminderHour = 20
+    @AppStorage("reminderMinute") private var reminderMinute = 0
+    @State private var showingSettings = false
     @State private var editingStartTime = false
     @State private var editingCustomStartTime = false
     @State private var editStartDate = Date()
@@ -228,6 +232,9 @@ struct ContentView: View {
                     .padding(.top, 8)
             }
         }
+        .sheet(isPresented: $showingSettings) {
+            SettingsView()
+        }
         }
     }
 
@@ -294,6 +301,16 @@ struct ContentView: View {
         return formatter.string(from: endTime)
     }
 
+    private var reminderTimeFormatted: String {
+        var components = DateComponents()
+        components.hour = reminderHour
+        components.minute = reminderMinute
+        let date = Calendar.current.date(from: components) ?? Date()
+        let formatter = DateFormatter()
+        formatter.dateFormat = "h:mm a"
+        return "Reminder at \(formatter.string(from: date))"
+    }
+
     /// Whether to show the end time (only when a goal is set)
     private var hasGoalToShow: Bool {
         if let session = activeSession {
@@ -339,6 +356,21 @@ struct ContentView: View {
                         .shadow(radius: 2)
                         .offset(y: -130)
                         .rotationEffect(.degrees(handleAngle))
+                }
+
+                // Reminder indicator
+                if activeSession == nil {
+                    Button {
+                        showingSettings = true
+                    } label: {
+                        HStack(spacing: 4) {
+                            Image(systemName: reminderEnabled ? "bell.fill" : "bell.slash")
+                            Text(reminderEnabled ? reminderTimeFormatted : "Reminder off")
+                        }
+                        .font(.caption)
+                        .foregroundStyle(.tertiary)
+                    }
+                    .offset(y: -40)
                 }
 
                 // Timer text - always centered
