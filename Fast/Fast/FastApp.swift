@@ -36,9 +36,13 @@ struct FastApp: App {
                 .onAppear {
                     NotificationManager.shared.requestPermission()
                     if UserDefaults.standard.bool(forKey: "reminderEnabled") {
+                        let hour = UserDefaults.standard.integer(forKey: "reminderHour")
+                        let minute = UserDefaults.standard.integer(forKey: "reminderMinute")
                         NotificationManager.shared.scheduleEveningReminder(
-                            hour: UserDefaults.standard.integer(forKey: "reminderHour"),
-                            minute: UserDefaults.standard.integer(forKey: "reminderMinute")
+                            hour: hour, minute: minute
+                        )
+                        NotificationManager.shared.scheduleHourlyReminders(
+                            fromHour: hour, minute: minute
                         )
                     }
                 }
