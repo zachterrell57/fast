@@ -69,8 +69,12 @@ struct SettingsView: View {
                     NotificationManager.shared.scheduleEveningReminder(
                         hour: reminderHour, minute: reminderMinute
                     )
+                    NotificationManager.shared.scheduleHourlyReminders(
+                        fromHour: reminderHour, minute: reminderMinute
+                    )
                 } else {
                     NotificationManager.shared.cancelEveningReminder()
+                    NotificationManager.shared.cancelHourlyReminders()
                 }
             }
             .onChange(of: reminderHour) { _, _ in
@@ -78,11 +82,17 @@ struct SettingsView: View {
                 NotificationManager.shared.scheduleEveningReminder(
                     hour: reminderHour, minute: reminderMinute
                 )
+                NotificationManager.shared.scheduleHourlyReminders(
+                    fromHour: reminderHour, minute: reminderMinute
+                )
             }
             .onChange(of: reminderMinute) { _, _ in
                 guard reminderEnabled else { return }
                 NotificationManager.shared.scheduleEveningReminder(
                     hour: reminderHour, minute: reminderMinute
+                )
+                NotificationManager.shared.scheduleHourlyReminders(
+                    fromHour: reminderHour, minute: reminderMinute
                 )
             }
         }

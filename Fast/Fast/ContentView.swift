@@ -205,6 +205,15 @@ struct ContentView: View {
         .onChange(of: scenePhase) { _, newPhase in
             if newPhase == .active {
                 timerEngine.refresh()
+
+                // Manage hourly reminders based on fasting state
+                if activeSession != nil {
+                    NotificationManager.shared.cancelHourlyReminders()
+                } else if reminderEnabled {
+                    NotificationManager.shared.scheduleHourlyReminders(
+                        fromHour: reminderHour, minute: reminderMinute
+                    )
+                }
             }
         }
         .toolbar {
@@ -579,6 +588,10 @@ struct ContentView: View {
                 NotificationManager.shared.scheduleFastComplete(at: endDate)
             }
         }
+
+        // Cancel hourly reminders since a fast has started
+        NotificationManager.shared.cancelHourlyReminders()
+
         customStartDate = nil
     }
 
@@ -597,6 +610,14 @@ struct ContentView: View {
 
         timerEngine.stop()
         NotificationManager.shared.cancelFastComplete()
+
+        // Re-schedule hourly reminders since no fast is active
+        if reminderEnabled {
+            NotificationManager.shared.scheduleHourlyReminders(
+                fromHour: reminderHour, minute: reminderMinute
+            )
+        }
+
         selectedSeconds = 0
         selectedPreset = nil
     }
@@ -612,6 +633,14 @@ struct ContentView: View {
                     NotificationManager.shared.scheduleFastComplete(at: endDate)
                 }
             }
+
+            // Ensure hourly reminders are cancelled while fasting
+            NotificationManager.shared.cancelHourlyReminders()
+        } else if reminderEnabled {
+            // No active fast — ensure hourly reminders are scheduled
+            NotificationManager.shared.scheduleHourlyReminders(
+                fromHour: reminderHour, minute: reminderMinute
+            )
         }
     }
 }
