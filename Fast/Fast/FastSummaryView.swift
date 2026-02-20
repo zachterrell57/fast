@@ -115,47 +115,53 @@ struct FastSummaryView: View {
             }
             .frame(maxHeight: .infinity)
 
-            // Bottom content - fixed height for consistent layout
-            VStack(spacing: 8) {
-                HStack(spacing: 24) {
-                    VStack(spacing: 2) {
-                        Text("Started")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                        Text(startTimeFormatted)
-                            .font(.subheadline.weight(.medium))
-                            .underline(color: .secondary.opacity(0.5))
-                    }
-                    .onTapGesture {
-                        editDate = session.startAt
-                        editingStartTime = true
-                    }
+            // Bottom content - summary centered between ring and button
+            VStack(spacing: 0) {
+                Spacer()
 
-                    Image(systemName: "arrow.right")
-                        .foregroundColor(.secondary)
+                VStack(spacing: 8) {
+                    HStack(spacing: 24) {
+                        VStack(spacing: 2) {
+                            Text("Started")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            Text(startTimeFormatted)
+                                .font(.subheadline.weight(.medium))
+                                .underline(color: .secondary.opacity(0.5))
+                        }
+                        .onTapGesture {
+                            editDate = session.startAt
+                            editingStartTime = true
+                        }
 
-                    VStack(spacing: 2) {
-                        Text("Ended")
-                            .font(.caption)
+                        Image(systemName: "arrow.right")
                             .foregroundColor(.secondary)
-                        Text(endTimeFormatted)
-                            .font(.subheadline.weight(.medium))
-                            .underline(color: .secondary.opacity(0.5))
-                    }
-                    .onTapGesture {
-                        if let endAt = session.endAt {
-                            editDate = endAt
-                            editingEndTime = true
+
+                        VStack(spacing: 2) {
+                            Text("Ended")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            Text(endTimeFormatted)
+                                .font(.subheadline.weight(.medium))
+                                .underline(color: .secondary.opacity(0.5))
+                        }
+                        .onTapGesture {
+                            if let endAt = session.endAt {
+                                editDate = endAt
+                                editingEndTime = true
+                            }
                         }
                     }
+
+                    // Goal info (only if goal was set)
+                    if let targetDuration = formattedTargetDuration {
+                        Text("Goal: \(targetDuration)")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
                 }
 
-                // Goal info (only if goal was set)
-                if let targetDuration = formattedTargetDuration {
-                    Text("Goal: \(targetDuration)")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
+                Spacer()
 
                 // Start New Fast button (only for today)
                 if isToday, let onStartNewFast = onStartNewFast {
@@ -170,7 +176,7 @@ struct FastSummaryView: View {
                     .controlSize(.large)
                 }
             }
-            .frame(height: 120)
+            .frame(height: 160)
         }
         .padding(.bottom, 20)
         .overlay(alignment: .topTrailing) {
