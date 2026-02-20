@@ -526,11 +526,14 @@ struct ContentView: View {
                 timerView
             } else if !showingNewFastAfterSummary, let completed = todaySession {
                 // Show today's completed fast summary
-                FastSummaryView(session: completed, isToday: true) {
+                FastSummaryView(session: completed, isToday: true, onStartNewFast: {
                     withAnimation {
                         showingNewFastAfterSummary = true
                     }
-                }
+                }, onDelete: {
+                    modelContext.delete(completed)
+                    showingNewFastAfterSummary = true
+                })
             } else {
                 // Show timer/dial for starting new fast
                 timerView
@@ -538,9 +541,9 @@ struct ContentView: View {
         } else {
             // Past date logic
             if let session = session {
-                FastSummaryView(session: session, isToday: false) {
-                    // No "Start New Fast" for past dates
-                }
+                FastSummaryView(session: session, isToday: false, onDelete: {
+                    modelContext.delete(session)
+                })
             } else {
                 emptyStateView
             }
