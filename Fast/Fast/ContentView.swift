@@ -11,8 +11,8 @@ import SwiftData
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.scenePhase) private var scenePhase
-    @Query(filter: #Predicate<FastSession> { $0.endAt == nil }) private var activeSessions: [FastSession]
-    @Query(filter: #Predicate<FastSession> { $0.endAt != nil }) private var completedSessions: [FastSession]
+    @Query(filter: #Predicate<FastSession> { $0.endAt == nil && $0.deletedAt == nil }) private var activeSessions: [FastSession]
+    @Query(filter: #Predicate<FastSession> { $0.endAt != nil && $0.deletedAt == nil }) private var completedSessions: [FastSession]
     @StateObject private var timerEngine = TimerEngine()
 
     #if DEBUG
@@ -526,11 +526,14 @@ struct ContentView: View {
                 timerView
             } else if !showingNewFastAfterSummary, let completed = todaySession {
                 // Show today's completed fast summary
-                FastSummaryView(session: completed, isToday: true) {
+                FastSummaryView(session: completed, isToday: true, onStartNewFast: {
                     withAnimation {
                         showingNewFastAfterSummary = true
                     }
-                }
+                }, onDelete: {
+                    completed.deletedAt = Date()
+                    showingNewFastAfterSummary = true
+                })
             } else {
                 // Show timer/dial for starting new fast
                 timerView
@@ -538,9 +541,9 @@ struct ContentView: View {
         } else {
             // Past date logic
             if let session = session {
-                FastSummaryView(session: session, isToday: false) {
-                    // No "Start New Fast" for past dates
-                }
+                FastSummaryView(session: session, isToday: false, onDelete: {
+                    session.deletedAt = Date()
+                })
             } else {
                 emptyStateView
             }

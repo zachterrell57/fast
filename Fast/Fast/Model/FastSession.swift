@@ -14,6 +14,7 @@ class FastSession {
     var startAt: Date
     var endAt: Date?
     var targetDuration: TimeInterval?
+    var deletedAt: Date?
 
     var elapsedDuration: TimeInterval {
         (endAt ?? Date()).timeIntervalSince(startAt)

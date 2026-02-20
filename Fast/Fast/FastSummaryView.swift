@@ -11,10 +11,12 @@ struct FastSummaryView: View {
     let session: FastSession
     let isToday: Bool
     let onStartNewFast: (() -> Void)?
+    var onDelete: (() -> Void)?
 
     @State private var editingStartTime = false
     @State private var editingEndTime = false
     @State private var editDate = Date()
+    @State private var showingDeleteConfirmation = false
 
     private let calendar = Calendar.current
 
@@ -171,6 +173,34 @@ struct FastSummaryView: View {
             .frame(height: 120)
         }
         .padding(.bottom, 20)
+        .overlay(alignment: .topTrailing) {
+            if onDelete != nil {
+                Menu {
+                    Button(role: .destructive) {
+                        showingDeleteConfirmation = true
+                    } label: {
+                        Label("Delete Fast", systemImage: "trash")
+                    }
+                } label: {
+                    Image(systemName: "ellipsis")
+                        .font(.body)
+                        .foregroundStyle(.secondary)
+                        .frame(width: 44, height: 44)
+                        .contentShape(Rectangle())
+                }
+            }
+        }
+        .confirmationDialog(
+            "Delete this fast?",
+            isPresented: $showingDeleteConfirmation,
+            titleVisibility: .visible
+        ) {
+            Button("Delete", role: .destructive) {
+                onDelete?()
+            }
+        } message: {
+            Text("This action cannot be undone.")
+        }
         .sheet(isPresented: $editingStartTime) {
             TimeEditSheet(
                 editType: .start,
