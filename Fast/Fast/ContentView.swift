@@ -11,8 +11,8 @@ import SwiftData
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.scenePhase) private var scenePhase
-    @Query(filter: #Predicate<FastSession> { $0.endAt == nil }) private var activeSessions: [FastSession]
-    @Query(filter: #Predicate<FastSession> { $0.endAt != nil }) private var completedSessions: [FastSession]
+    @Query(filter: #Predicate<FastSession> { $0.endAt == nil && $0.deletedAt == nil }) private var activeSessions: [FastSession]
+    @Query(filter: #Predicate<FastSession> { $0.endAt != nil && $0.deletedAt == nil }) private var completedSessions: [FastSession]
     @StateObject private var timerEngine = TimerEngine()
 
     #if DEBUG
@@ -531,7 +531,7 @@ struct ContentView: View {
                         showingNewFastAfterSummary = true
                     }
                 }, onDelete: {
-                    modelContext.delete(completed)
+                    completed.deletedAt = Date()
                     showingNewFastAfterSummary = true
                 })
             } else {
@@ -542,7 +542,7 @@ struct ContentView: View {
             // Past date logic
             if let session = session {
                 FastSummaryView(session: session, isToday: false, onDelete: {
-                    modelContext.delete(session)
+                    session.deletedAt = Date()
                 })
             } else {
                 emptyStateView
