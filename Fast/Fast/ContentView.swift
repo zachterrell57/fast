@@ -541,7 +541,7 @@ struct ContentView: View {
         } else {
             // Past date logic
             if let session = session {
-                FastSummaryView(session: session, isToday: false, onDelete: {
+                FastSummaryView(session: session, isToday: false, onStartNewFast: nil, onDelete: {
                     session.deletedAt = Date()
                 })
             } else {
