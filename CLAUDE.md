@@ -21,6 +21,11 @@ Fasting tracker iOS app.
 
 **Action**: **IMMEDIATELY invoke** `Skill tool: skill="push"`
 
+### Run Simulator Mode
+**Trigger**: Message is "run simulator", "boot simulator", "start simulator", or similar
+
+**Action**: **IMMEDIATELY invoke** `Skill tool: skill="run-simulator"`
+
 ### Default Behavior
 If no prefix is detected, ask the user which mode they want, or infer from context (simple fixes = bug mode, new functionality = feature mode).
 
@@ -29,3 +34,4 @@ See `.claude/skills/` for detailed workflow definitions.
 ## Workflow
 
 - After completing UI changes, build and run in the simulator to reflect changes
+- Always boot the simulator as an iPhone Pro Max with iOS 26
