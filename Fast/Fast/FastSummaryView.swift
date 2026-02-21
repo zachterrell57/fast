@@ -160,6 +160,18 @@ struct FastSummaryView: View {
                             .foregroundColor(.secondary)
                     }
                 }
+                .padding(.horizontal, 32)
+                .padding(.vertical, 16)
+                .contentShape(Rectangle())
+                .contextMenu {
+                    if onDelete != nil {
+                        Button(role: .destructive) {
+                            showingDeleteConfirmation = true
+                        } label: {
+                            Label("Delete Fast", systemImage: "trash")
+                        }
+                    }
+                }
 
                 Spacer()
 
@@ -179,23 +191,6 @@ struct FastSummaryView: View {
             .frame(height: 160)
         }
         .padding(.bottom, 20)
-        .overlay(alignment: .topTrailing) {
-            if onDelete != nil {
-                Menu {
-                    Button(role: .destructive) {
-                        showingDeleteConfirmation = true
-                    } label: {
-                        Label("Delete Fast", systemImage: "trash")
-                    }
-                } label: {
-                    Image(systemName: "ellipsis")
-                        .font(.body)
-                        .foregroundStyle(.secondary)
-                        .frame(width: 44, height: 44)
-                        .contentShape(Rectangle())
-                }
-            }
-        }
         .confirmationDialog(
             "Delete this fast?",
             isPresented: $showingDeleteConfirmation,
