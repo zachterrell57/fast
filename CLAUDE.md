@@ -26,6 +26,11 @@ Fasting tracker iOS app.
 
 **Action**: **IMMEDIATELY invoke** `Skill tool: skill="run-simulator"`
 
+### Deploy Mode
+**Trigger**: Message is "deploy", "/deploy", "deploy to testflight", "create pr and deploy", or similar
+
+**Action**: **IMMEDIATELY invoke** `Skill tool: skill="deploy"`
+
 ### Default Behavior
 If no prefix is detected, ask the user which mode they want, or infer from context (simple fixes = bug mode, new functionality = feature mode).
 
