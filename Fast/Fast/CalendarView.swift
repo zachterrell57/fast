@@ -98,7 +98,7 @@ struct CompactWeekView: View {
                     DayCell(
                         date: date,
                         isFasted: isFasted(date),
-                        isToday: isToday(date),
+                        isToday: isToday(date) && (selectedDate == nil || isSelected(date)),
                         isSelected: isSelected(date),
                         onTap: { onDateSelected(date) }
                     )
@@ -187,7 +187,7 @@ struct CalendarView: View {
                         DayCell(
                             date: date,
                             isFasted: isFasted(date),
-                            isToday: isToday(date),
+                            isToday: isToday(date) && (selectedDate == nil || isSelected(date)),
                             isSelected: isSelected(date),
                             onTap: { onDateSelected(date) }
                         )
