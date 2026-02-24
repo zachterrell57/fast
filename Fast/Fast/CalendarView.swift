@@ -281,10 +281,16 @@ struct DayCell: View {
                     Circle()
                         .fill(Color.primary)
                         .padding(isSelected ? 3 : 0)
-                } else if isToday {
+                }
+
+                if isToday && !isFasted {
                     Circle()
                         .stroke(Color.primary, lineWidth: 1)
                         .padding(isSelected ? 3 : 0)
+                } else if isToday && isFasted && !isSelected {
+                    Circle()
+                        .stroke(Color.primary, lineWidth: 3)
+                        .padding(0)
                 }
 
                 Text("\(calendar.component(.day, from: date))")
