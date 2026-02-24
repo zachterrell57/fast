@@ -280,7 +280,7 @@ struct DayCell: View {
                 if isFasted {
                     Circle()
                         .fill(Color.primary)
-                        .padding(isSelected ? 3 : 0)
+                        .padding((isSelected || isToday) ? 3 : 0)
                 }
 
                 if isToday && !isFasted {
